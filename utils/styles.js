@@ -5,7 +5,7 @@ const useStyles= makeStyles({
         backgroundColor:'#203040',
         '& a':{
             color:'#ffffff',
-            marginLeft: 100,
+            marginLeft: 10,
         }
     },
     main:{
@@ -21,7 +21,17 @@ const useStyles= makeStyles({
         width: '80%',
         height: '15vw',
         // objectFit: 'cover',
+      },
+      brand:{
+          fontWeight:'bold',
+          fontSize:'1.5rem'
+      },
+      grow:{
+          flexGrow:1
       }
+      
+          
+      
 })
 
 export default useStyles;
