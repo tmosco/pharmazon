@@ -13,7 +13,15 @@ const useStyles= makeStyles({
     },
     footer:{
         textAlign:'center'
-    }
+    },
+    media: {
+        
+        // paddingTop: '56.25%', // 16:9,
+        marginTop:'30',
+        width: '80%',
+        height: '15vw',
+        // objectFit: 'cover',
+      }
 })
 
 export default useStyles;
