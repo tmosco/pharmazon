@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import React from 'react';
-import { useRouter } from 'next/router';
 import NextLink from 'next/link';
 import Image from 'next/image';
-import data from '../../utils/data';
+import db from '../../utils/db';
+import Product from '../../models/product';
+
 import {
   Link,
   Grid,
@@ -16,11 +17,9 @@ import {
 import Layout from '../../components/Layout';
 import useStyles from '../../utils/styles';
 
-export default function product() {
+export default function product({ product }) {
   const classes = useStyles();
-  const router = useRouter();
-  const { slug } = router.query;
-  const product = data.products.find((a) => a.slug === slug);
+
   if (!product) {
     return <div>Product Not Found</div>;
   }
@@ -44,7 +43,9 @@ export default function product() {
         <Grid item md={3} xs={12}>
           <List>
             <ListItem>
-              <Typography component="h1" variant="h1">{product.name}</Typography>
+              <Typography component="h1" variant="h1">
+                {product.name}
+              </Typography>
             </ListItem>
             <ListItem>
               <Typography>Category: {product.category}</Typography>
@@ -81,15 +82,30 @@ export default function product() {
                     <Typography>Status</Typography>
                   </Grid>
                   <Grid item xs={6}>
-                    <Typography>{product.countInStock > 0 ? "In stock" : "Unavailable"}</Typography>
+                    <Typography>
+                      {product.countInStock > 0 ? 'In stock' : 'Unavailable'}
+                    </Typography>
                   </Grid>
                 </Grid>
               </ListItem>
-              <Button fullWidth variant="contained" color="primary">Add to cart</Button>
+              <Button fullWidth variant="contained" color="primary">
+                Add to cart
+              </Button>
             </List>
           </Card>
         </Grid>
       </Grid>
     </Layout>
   );
+}
+
+export async function getServerSideProps(context) {
+  const { params } = context;
+  const { slug } = params;
+  await db.connect();
+  const product = await Product.findOne({ slug }).lean();
+  await db.disconnect();
+  return {
+    props: { product: db.convertDocToObj(product) },
+  };
 }
