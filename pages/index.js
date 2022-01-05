@@ -14,7 +14,7 @@ import {
   Typography,
   CardActions,
   Button,
-  Link
+  Link,
 } from '@material-ui/core';
 import data from '../utils/data';
 
@@ -30,25 +30,25 @@ export default function Home() {
               <Card>
                 <NextLink href={`/product/${product.slug}`} passHref>
                   <Link>
-                  <CardActionArea>
-                    <CardMedia
-                      className={classes.media}
-                      component="img"
-                      image={product.image}
-                      title={product.name}
-                    ></CardMedia>
-                    <CardContent>
-                      <Typography>{product.name}</Typography>
-                    </CardContent>
-                  </CardActionArea>
-                  <CardActions>
-                    <Typography>₦{product.price}</Typography>
-                    <Button size="small" color="primary">
-                      Add to Cart
-                    </Button>
-                  </CardActions>
-                      </Link>
+                    <CardActionArea>
+                      <CardMedia
+                        className={classes.media}
+                        component="img"
+                        image={product.image}
+                        title={product.name}
+                      ></CardMedia>
+                    </CardActionArea>
+                  </Link>
                 </NextLink>
+                <CardContent>
+                  <Typography>{product.name}</Typography>
+                </CardContent>
+                <CardActions>
+                  <Typography>₦{product.price}</Typography>
+                  <Button size="small" color="primary">
+                    Add to Cart
+                  </Button>
+                </CardActions>
               </Card>
             </Grid>
           ))}

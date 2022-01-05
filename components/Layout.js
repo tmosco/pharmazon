@@ -24,19 +24,18 @@ export default function Layout({ title, description, children }) {
         fontWeight: 400,
         margin: '1rem 0',
       },
-      body1:{
-        fontWeight:'normal'
+      body1: {
+        fontWeight: 'normal',
       },
-      palette:{
-        type:'light',
-        primary:{
-          main:'#f0c000'
-        },
-        secondary:{
-          main:'#208080'
-        },
-
-      }
+    },
+    palette: {
+      type: 'light',
+      primary: {
+        main: '#f0c000',
+      },
+      secondary: {
+        main: '#208080',
+      },
     },
   });
   const classes = useStyles();
@@ -47,7 +46,7 @@ export default function Layout({ title, description, children }) {
         {description && <meta name="description" content={description}></meta>}
       </Head>
       <ThemeProvider theme={theme}>
-        <CssBaseline/>
+        <CssBaseline />
         <AppBar position="static" className={classes.navbar}>
           <Toolbar>
             <NextLink href="/" passHref>
