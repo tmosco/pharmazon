@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React from 'react';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
@@ -16,7 +17,6 @@ import Layout from '../../components/Layout';
 import useStyles from '../../utils/styles';
 
 export default function product() {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const classes = useStyles();
   const router = useRouter();
   const { slug } = router.query;
@@ -44,7 +44,7 @@ export default function product() {
         <Grid item md={3} xs={12}>
           <List>
             <ListItem>
-              <Typography component="h1">Name: {product.name}</Typography>
+              <Typography component="h1" variant="h1">{product.name}</Typography>
             </ListItem>
             <ListItem>
               <Typography>Category: {product.category}</Typography>
