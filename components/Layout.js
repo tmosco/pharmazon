@@ -10,12 +10,13 @@ import {
 } from '@material-ui/core';
 import useStyles from '../utils/styles';
 
-export default function Layout({ children }) {
+export default function Layout({title,description, children }) {
   const classes = useStyles();
   return (
     <div>
       <Head>
-        <title>Pharmazon</title>
+        <title>{title? `${title} - Pharmazon` : 'Pharmazon'}</title>
+        {description && <meta name="description" content={description}></meta>}
       </Head>
       <AppBar position="static" className={classes.navbar}>
         <Toolbar>

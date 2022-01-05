@@ -12,7 +12,10 @@ const useStyles= makeStyles({
         minHeight:'80vh',
     },
     footer:{
-        textAlign:'center'
+        textAlign:'center',
+        marginTop:10
+
+        
     },
     media: {
         
@@ -28,8 +31,12 @@ const useStyles= makeStyles({
       },
       grow:{
           flexGrow:1
+      },
+
+      section:{
+          marginTop:10,
+          marginBottom:10
       }
-      
           
       
 })

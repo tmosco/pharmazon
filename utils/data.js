@@ -2,6 +2,7 @@ const data = {
   products: [
     {
       name: 'Zolat',
+      slug:'zolat',
       category: 'Deworming',
       image: '/images/zolat.jpg',
       price: 300,
@@ -13,6 +14,7 @@ const data = {
     },
     {
       name: 'Clorec',
+      slug:'clorec',
       category: 'Anti-malaria',
       image: '/images/clorec.jpg',
       price: 700,
@@ -24,6 +26,7 @@ const data = {
     },
     {
       name: 'Bunto',
+      slug:'bunto',
       category: 'Blood-Tonic',
       image: '/images/bunto.jpg',
       price: 1300,
@@ -35,6 +38,7 @@ const data = {
     },
     {
       name: 'Vitamin C',
+      slug:'vitamin-c',
       category: 'Vitamins',
       image: '/images/vitamin-c.jpg',
       price: 250,
@@ -46,6 +50,7 @@ const data = {
     },
     {
       name: 'Loxagyl',
+      slug:'loxagyl',
       category: 'Pain reliever',
       image: '/images/loxagyl.jpg',
       price: 100,
