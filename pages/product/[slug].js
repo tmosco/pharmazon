@@ -1,9 +1,11 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React from 'react';
+import React,{useContext} from 'react';
 import NextLink from 'next/link';
 import Image from 'next/image';
 import db from '../../utils/db';
 import Product from '../../models/product';
+import axios from 'axios';
+import  {Store} from '../../utils/Store';
 
 import {
   Link,
@@ -18,10 +20,19 @@ import Layout from '../../components/Layout';
 import useStyles from '../../utils/styles';
 
 export default function product({ product }) {
+  const {dispatch} = useContext(Store)
   const classes = useStyles();
 
   if (!product) {
     return <div>Product Not Found</div>;
+  }
+  async function addToCartHandler() {
+    const { data } = await axios.get(`/api/products/${product._id}`);
+    if(data.countInStock <= 0 ){
+      window.alert('Sorry. Product is out of stock');
+      return
+    }
+    dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity: 1 } });
   }
   return (
     <Layout title={product.name} description={product.description}>
@@ -88,7 +99,12 @@ export default function product({ product }) {
                   </Grid>
                 </Grid>
               </ListItem>
-              <Button fullWidth variant="contained" color="primary">
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                onClick={addToCartHandler}
+              >
                 Add to cart
               </Button>
             </List>
