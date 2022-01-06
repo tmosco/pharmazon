@@ -18,8 +18,10 @@ import {
 } from '@material-ui/core';
 import Layout from '../../components/Layout';
 import useStyles from '../../utils/styles';
+import { useRouter } from 'next/router';
 
 export default function product({ product }) {
+  const router= useRouter();
   const {dispatch} = useContext(Store)
   const classes = useStyles();
 
@@ -33,6 +35,8 @@ export default function product({ product }) {
       return
     }
     dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity: 1 } });
+    router.push('/cart');
+
   }
   return (
     <Layout title={product.name} description={product.description}>
