@@ -21,8 +21,10 @@ import {
 import useStyles from '../utils/styles';
 import { Store } from '../utils/Store';
 import Cookies from 'js-cookie';
+import { useRouter} from 'next/router';
 
 export default function Layout({ title, description, children }) {
+  const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const { darkMode, cart, userInfo } = state;
   const theme = createTheme({
@@ -65,6 +67,14 @@ export default function Layout({ title, description, children }) {
   }
   function loginMenuCloseHandler() {
     setAnchorEl(null);
+  }
+  function LogoutHandler(){
+    setAnchorEl(null);
+    dispatch({type:'USER_LOGOUT'});
+    Cookies.remove('userInfo');
+    Cookies.remove('cartItems');
+    router.push('/');
+    
   }
   return (
     <div>
@@ -125,7 +135,7 @@ export default function Layout({ title, description, children }) {
                     <MenuItem onClick={loginMenuCloseHandler}>
                       My account
                     </MenuItem>
-                    <MenuItem onClick={loginMenuCloseHandler}>
+                    <MenuItem onClick={LogoutHandler}>
                       Logout
                     </MenuItem>
                   </Menu>

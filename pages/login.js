@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext ,useEffect} from 'react';
 import Layout from '../components/Layout';
 import NextLink from 'next/link';
 import {
@@ -17,13 +17,15 @@ import Cookies from 'js-cookie';
 
 export default function Login() {
   const router = useRouter();
-  const redirect = router.query;
+  const {redirect} = router.query;
 
   const { state, dispatch } = useContext(Store);
   const { userInfo } = state;
-  if (userInfo) {
-    router.push('/');
-  }
+  useEffect(() => {
+    if (userInfo) {
+      router.push('/');
+    }
+  }, []);
 
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
@@ -36,7 +38,7 @@ export default function Login() {
         password,
       });
       dispatch({ type: 'USER_LOGIN', payload: data });
-      Cookies.set('userInfo',  JSON.stringify(data));
+      Cookies.set('userInfo', JSON.stringify(data));
       router.push(redirect || '/');
     } catch (err) {
       alert(err.response.data ? err.response.data.message : err.message);
