@@ -1,3 +1,9 @@
+import React, { useContext } from 'react';
+import dynamic from 'next/dynamic';
+import Layout from '../components/Layout';
+import { Store } from '../utils/Store';
+import NextLink from 'next/link';
+import Image from 'next/image';
 import {
   Typography,
   Grid,
@@ -15,13 +21,8 @@ import {
   List,
   ListItem,
 } from '@material-ui/core';
-import React, { useContext } from 'react';
-import Layout from '../components/Layout';
-import { Store } from '../utils/Store';
-import NextLink from 'next/link';
-import Image from 'next/image';
 
-export default function CartScreen() {
+function CartScreen() {
   const { state } = useContext(Store);
   const {
     cart: { cartItems },
@@ -115,3 +116,6 @@ export default function CartScreen() {
     </Layout>
   );
 }
+
+
+export default dynamic(()=>Promise.resolve(CartScreen),{ssr:false});
