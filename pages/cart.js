@@ -22,8 +22,10 @@ import {
   List,
   ListItem,
 } from '@material-ui/core';
+import{ useRouter } from 'next/router';
 
 function CartScreen() {
+  const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const {
     cart: { cartItems },
@@ -41,6 +43,10 @@ function CartScreen() {
     dispatch({ type: 'CART_REMOVE_ITEM', payload: item });
   }
 
+  function checkoutHandler() {
+    router.push('/shipping');
+  }
+
   return (
     <Layout title="Shopping Cart">
       <Typography component="h1" variant="h1">
@@ -49,7 +55,7 @@ function CartScreen() {
       {cartItems.length === 0 ? (
         <div>
           Cart is empty.
-          <NextLink href={"/"} passHref>
+          <NextLink href={'/'} passHref>
             <Link>Go shopping</Link>
           </NextLink>
         </div>
@@ -130,7 +136,12 @@ function CartScreen() {
                   </Typography>
                 </ListItem>
                 <ListItem>
-                  <Button variant="contained" color="primary" fullWidth>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={checkoutHandler}
+                  >
                     Check Out
                   </Button>
                 </ListItem>
