@@ -1,8 +1,25 @@
+import bcrypt from 'bcryptjs';
+
 const data = {
+  users: [
+    {
+      name: 'Userone',
+      email: 'userone@example.com',
+      password: bcrypt.hashSync('userone'),
+      isAdmin: true,
+    },
+    {
+      name: 'Usertwo',
+      email: 'usertwo@example.com',
+      password: bcrypt.hashSync('usertwo'),
+      isAdmin: false,
+    },
+  ],
+
   products: [
     {
       name: 'Zolat',
-      slug:'zolat',
+      slug: 'zolat',
       category: 'Deworming',
       image: '/images/zolat.jpg',
       price: 300,
@@ -14,7 +31,7 @@ const data = {
     },
     {
       name: 'Clorec',
-      slug:'clorec',
+      slug: 'clorec',
       category: 'Anti-malaria',
       image: '/images/clorec.jpg',
       price: 700,
@@ -26,7 +43,7 @@ const data = {
     },
     {
       name: 'Bunto',
-      slug:'bunto',
+      slug: 'bunto',
       category: 'Blood-Tonic',
       image: '/images/bunto.jpg',
       price: 1300,
@@ -38,7 +55,7 @@ const data = {
     },
     {
       name: 'Vitamin C',
-      slug:'vitamin-c',
+      slug: 'vitamin-c',
       category: 'Vitamins',
       image: '/images/vitamin-c.jpg',
       price: 250,
@@ -50,7 +67,7 @@ const data = {
     },
     {
       name: 'Loxagyl',
-      slug:'loxagyl',
+      slug: 'loxagyl',
       category: 'Pain reliever',
       image: '/images/loxagyl.jpg',
       price: 100,
@@ -62,6 +79,5 @@ const data = {
     },
   ],
 };
-
 
 export default data;
