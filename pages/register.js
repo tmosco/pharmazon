@@ -35,10 +35,11 @@ export default function Register() {
   async function submitHandler(e) {
     e.preventDefault();
     if(password !== confirmPassword){
-        alert("Password dont match")
+        alert("Password dont match");
+        return;
     }
     try {
-      const { data } = await axios.post('/api/users/login', {
+      const { data } = await axios.post('/api/users/register', {
         name,
         email,
         password,
@@ -55,7 +56,7 @@ export default function Register() {
     <Layout title="Register">
       <form onSubmit={submitHandler} className={classes.form}>
         <Typography component="h1" variant="h1">
-          Login
+          Register
         </Typography>
         <List>
           <ListItem>
