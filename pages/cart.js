@@ -39,6 +39,11 @@ async function updateCartHandler(item,quantity){
 
 
 }
+function removeItemHandler(item){
+    dispatch({type:'CART_REMOVE_ITEM',payload:item})
+
+
+}
 
 
 
@@ -98,7 +103,7 @@ async function updateCartHandler(item,quantity){
                       </TableCell>
                       <TableCell align="right">₦{item.price}</TableCell>
                       <TableCell align="right">
-                        <Button variant="contained" color="secondary">
+                        <Button variant="contained" color="secondary" onClick={()=>removeItemHandler(item)}>
                           x
                         </Button>
                       </TableCell>
