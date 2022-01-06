@@ -1,3 +1,5 @@
+import React,{useContext} from 'react'
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Image from 'next/image';
 import styles from '../styles/Home.module.css';
@@ -5,7 +7,10 @@ import Layout from '../components/Layout';
 import useStyles from '../utils/styles';
 import NextLink from 'next/link';
 import Product from '../models/product';
-
+import data from '../utils/data';
+import db from '../utils/db';
+import axios from 'axios';
+import { Store } from '../utils/Store';
 import {
   Grid,
   Card,
@@ -17,11 +22,21 @@ import {
   Button,
   Link,
 } from '@material-ui/core';
-import data from '../utils/data';
-import db from '../utils/db';
 
-export default function Home({products}) {
+export default function Home({ products }) {
   const classes = useStyles();
+  const router = useRouter();
+  const { dispatch } = useContext(Store);
+
+  async function addToCartHandler(product) {
+    const { data } = await axios.get(`/api/products/${product._id}`);
+    if (data.countInStock <= 0) {
+      window.alert('Sorry. Product is out of stock');
+      return;
+    }
+    dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity: 1 } });
+    router.push('/cart');
+  }
   return (
     <Layout>
       <div>
@@ -47,7 +62,11 @@ export default function Home({products}) {
                 </CardContent>
                 <CardActions>
                   <Typography>₦{product.price}</Typography>
-                  <Button size="small" color="primary">
+                  <Button
+                    size="small"
+                    color="primary"
+                    onClick={() => addToCartHandler(product)}
+                  >
                     Add to Cart
                   </Button>
                 </CardActions>
@@ -65,6 +84,6 @@ export async function getServerSideProps() {
   const products = await Product.find({}).lean();
   await db.disconnect();
   return {
-    props: { products : products.map(db.convertDocToObj) },
+    props: { products: products.map(db.convertDocToObj) },
   };
 }
