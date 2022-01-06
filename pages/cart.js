@@ -31,7 +31,7 @@ function CartScreen() {
 
   async function updateCartHandler(item, quantity) {
     const { data } = await axios.get(`/api/products/${item._id}`);
-    if (data.countInStock <= 0) {
+    if (data.countInStock < quantity) {
       window.alert('Sorry. Product is out of stock');
       return;
     }
