@@ -86,7 +86,7 @@ export default function Register() {
                   error={Boolean(errors.name)}
                   helperText={
                     errors.email
-                      ? errors.email.type === 'pattern'
+                      ? errors.name.type === 'minLength'
                         ? 'Name length is more than 1'
                         : 'Name is required'
                       : ''

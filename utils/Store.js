@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie';
 import { createContext, useReducer } from 'react';
+import cart from '../pages/cart';
 
 export const Store = createContext();
 
@@ -8,6 +9,10 @@ const initialState = {
   cart: {
     cartItems: Cookies.get('cartItems')
       ? JSON.parse(Cookies.get('cartItems'))
+      : [],
+      shippingAddress:Cookies.get('shippingAddress')
+    //   ? JSON.parse(Cookies.get('shippingAddress'))
+   ? JSON.parse(Cookies.get('shippingAddress'))
       : [],
   },
   userInfo: Cookies.get('userInfo')
@@ -42,6 +47,9 @@ function reducer(state, action) {
       );
       Cookies.set('cartItems', JSON.stringify(cartItems));
       return { ...state, cart: { ...state.cart, cartItems } };
+    }
+    case 'SAVE_SHIPPING_ADDRESS':{
+        return {...state, cart : {...state.cart, shippingAddress:action.payload }};
     }
     case 'USER_LOGIN': {
       return { ...state, userInfo: action.payload };
