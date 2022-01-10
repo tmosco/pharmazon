@@ -11,9 +11,11 @@ const initialState = {
       ? JSON.parse(Cookies.get('cartItems'))
       : [],
     shippingAddress: Cookies.get('shippingAddress')
-      ? //   ? JSON.parse(Cookies.get('shippingAddress'))
-        JSON.parse(Cookies.get('shippingAddress'))
+    ?  JSON.parse(Cookies.get('shippingAddress'))
       : [],
+    paymentMethod: Cookies.get('paymentMethod')
+      ?  Cookies.get('paymentMethod')
+      : ' ',
   },
   userInfo: Cookies.get('user Info')
     ? JSON.parse(Cookies.get('userInfo'))
