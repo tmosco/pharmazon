@@ -1,4 +1,4 @@
-import React, { useContext , useEffect} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Layout from '../components/Layout';
 import { Store } from '../utils/Store';
@@ -25,18 +25,22 @@ import {
 import { useRouter } from 'next/router';
 import useStyles from '../utils/styles';
 import CheckoutWizard from '../components/CheckoutWizard';
+import { useSnackbar } from 'notistack';
+import { getError } from '../utils/error';
+import Cookies from 'js-cookie';
+import { CircularProgress } from '@mui/material';
 
 function PlaceOrder() {
   const classes = useStyles();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const {
     cart: { cartItems, shippingAddress, paymentMethod },
-  userInfo} = state;
+    userInfo,
+  } = state;
 
-  function checkoutHandler() {
-    router.push('/shipping');
-  }
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
   const itemsPrice = round2(
     cartItems.reduce((a, c) => a + c.price * c.quantity, 0)
@@ -49,6 +53,36 @@ function PlaceOrder() {
       router.push('/payment');
     }
   }, []);
+
+  async function placeOrderHandler() {
+    closeSnackbar();
+    try {
+      setLoading(true);
+      const { data } = await axios.post(
+        '/api/orders',
+        {
+          orderItems: cartItems,
+          shippingAddress,
+          paymentMethod,
+          itemsPrice,
+          shippingPrice,
+          totalPrice,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${userInfo.token}`,
+          },
+        }
+      );
+      dispatch({ type: 'CART_CLEAR' });
+      Cookies.remove('cartItems');
+      setLoading(false);
+      router.push(`/order/${data._id}`);
+    } catch (err) {
+      setLoading(false);
+      enqueueSnackbar(getError(err), { variant: 'error' });
+    }
+  }
 
   return (
     <Layout title="Shopping Cart">
@@ -180,11 +214,16 @@ function PlaceOrder() {
                   variant="contained"
                   color="primary"
                   fullWidth
-                  onClick={checkoutHandler}
+                  onClick={placeOrderHandler}
                 >
                   Place Order
                 </Button>
               </ListItem>
+              {loading && (
+                <ListItem>
+                  <CircularProgress />
+                </ListItem>
+              )}
             </List>
           </Card>
         </Grid>
