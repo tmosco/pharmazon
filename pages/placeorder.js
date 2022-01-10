@@ -52,6 +52,9 @@ function PlaceOrder() {
     if (!paymentMethod) {
       router.push('/payment');
     }
+    if (cartItems.length === 0){
+        router.push('/cart');
+    }
   }, []);
 
   async function placeOrderHandler() {

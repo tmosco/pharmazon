@@ -1,4 +1,4 @@
-import React,{useContext} from 'react'
+import React, { useContext } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -26,19 +26,19 @@ import {
 export default function Home({ products }) {
   const classes = useStyles();
   const router = useRouter();
-  const {state, dispatch } = useContext(Store);
+  const { state, dispatch } = useContext(Store);
 
-  async function addToCartHandler(product) {
-    const existItem = state.cart.cartItems.find((x)=> x._id ===  product._id);
+  const addToCartHandler = async (product) => {
+    const existItem = state.cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
     const { data } = await axios.get(`/api/products/${product._id}`);
     if (data.countInStock < quantity) {
       window.alert('Sorry. Product is out of stock');
       return;
     }
-    dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity} });
+    dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity } });
     router.push('/cart');
-  }
+  };
   return (
     <Layout>
       <div>
