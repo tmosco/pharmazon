@@ -15,7 +15,7 @@ const initialState = {
    ? JSON.parse(Cookies.get('shippingAddress'))
       : [],
   },
-  userInfo: Cookies.get('userInfo')
+  userInfo: Cookies.get('user Info')
     ? JSON.parse(Cookies.get('userInfo'))
     : null,
 

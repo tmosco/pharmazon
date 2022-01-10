@@ -1,21 +1,18 @@
 import React, { useContext, useEffect } from 'react';
 import Layout from '../components/Layout';
-import NextLink from 'next/link';
 import {
   Button,
-  Link,
   List,
   ListItem,
   TextField,
   Typography,
 } from '@material-ui/core';
 import useStyles from '../utils/styles';
-import axios from 'axios';
 import { Store } from '../utils/Store';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import { Controller, useForm } from 'react-hook-form';
-import CheckoutWizard from '../components/checkoutWizard';
+import CheckoutWizard from '../components/CheckoutWizard';
 
 export default function Shipping() {
   const {
