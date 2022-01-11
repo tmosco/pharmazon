@@ -88,7 +88,7 @@ function PlaceOrder() {
   }
 
   return (
-    <Layout title="Shopping Cart">
+    <Layout title="Place Order">
       <CheckoutWizard activeStep={3} />
       <Typography component="h1" variant="h1">
         Place Order
