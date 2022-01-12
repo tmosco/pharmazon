@@ -91,25 +91,6 @@ function Order({ params }) {
     deliveredAt,
   } = order;
 
-  // useEffect(() => {
-  //   if (!userInfo) {
-  //     return router.push('/login');
-  //   }
-  //   const fetchOrder = async () => {
-  //     try {
-  //       dispatch({ type: 'FETCH_REQUEST' });
-  //       const { data } = await axios.get(`/api/orders/${orderId}`, {
-  //         headers: { authorization: `Bearer ${userInfo.token}` },
-  //       });
-  //       dispatch({ type: 'FETCH_SUCCESS', payload: data });
-  //     } catch (err) {
-  //       dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
-  //     }
-  //   };
-  //   if (!order._id || (order._id && order._id !== orderId)) {
-  //     fetchOrder();
-  //   }
-  // }, [order]);
   useEffect(() => {
     if (!userInfo) {
       return router.push('/login');
