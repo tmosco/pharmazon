@@ -82,7 +82,6 @@ function Order({ params }) {
     paymentMethod,
     orderItems,
     itemsPrice,
-    taxPrice,
     shippingPrice,
     totalPrice,
     isPaid,
@@ -102,14 +101,14 @@ function Order({ params }) {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
-          } catch (err) {
+      } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
-    }
-      };
-      if (!order._id || (order._id && order._id !== orderId)) {
-        fetchOrder();
       }
-    }, [order]);
+    };
+    if (!order._id || (order._id && order._id !== orderId)) {
+      fetchOrder();
+    }
+  }, [order]);
   const { enqueueSnackbar } = useSnackbar();
 
   //   function onError(err) {
@@ -143,6 +142,14 @@ function Order({ params }) {
                     {shippingAddress.country}
                   </Typography>
                 </ListItem>
+                <ListItem>
+                  <Typography>
+                    Status:
+                    {isDelivered
+                      ? `delivered at ${deliveredAt}`
+                      : 'not delivered'}
+                  </Typography>
+                </ListItem>
               </List>
             </Card>
             <Card className={classes.section}>
@@ -154,6 +161,12 @@ function Order({ params }) {
                 </ListItem>
                 <ListItem>
                   <Typography>{paymentMethod}</Typography>
+                </ListItem>
+                <ListItem>
+                  <Typography>
+                    Status:
+                    {isPaid ? `paid at ${paidAt}` : 'not paid'}
+                  </Typography>
                 </ListItem>
               </List>
             </Card>
