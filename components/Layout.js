@@ -1,4 +1,4 @@
-import React, { useContext , useState} from 'react';
+import React, { useContext, useState } from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
 
@@ -16,12 +16,11 @@ import {
   Badge,
   Button,
   Menu,
-
 } from '@material-ui/core';
 import useStyles from '../utils/styles';
 import { Store } from '../utils/Store';
 import Cookies from 'js-cookie';
-import { useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 
 export default function Layout({ title, description, children }) {
   const router = useRouter();
@@ -65,16 +64,18 @@ export default function Layout({ title, description, children }) {
   function loginClickHandler(e) {
     setAnchorEl(e.currentTarget);
   }
-  function loginMenuCloseHandler() {
+  function loginMenuCloseHandler(e, redirect) {
     setAnchorEl(null);
+    if (redirect) {
+      router.push(redirect);
+    }
   }
-  function LogoutHandler(){
+  function LogoutHandler() {
     setAnchorEl(null);
-    dispatch({type:'USER_LOGOUT'});
+    dispatch({ type: 'USER_LOGOUT' });
     Cookies.remove('userInfo');
     Cookies.remove('cartItems');
     router.push('/');
-    
   }
   return (
     <div>
@@ -129,15 +130,20 @@ export default function Layout({ title, description, children }) {
                     anchorEl={anchorEl}
                     open={Boolean(anchorEl)}
                     onClose={loginMenuCloseHandler}
-
                   >
-                    <MenuItem onClick={loginMenuCloseHandler}>Profile</MenuItem>
-                    <MenuItem onClick={loginMenuCloseHandler}>
-                      My account
+                    <MenuItem
+                      onClick={(e) => loginMenuCloseHandler(e, '/profile')}
+                    >
+                      Profile
                     </MenuItem>
-                    <MenuItem onClick={LogoutHandler}>
-                      Logout
+                    <MenuItem
+                      onClick={(e) =>
+                        loginMenuCloseHandler(e, '/order-history')
+                      }
+                    >
+                      Order History
                     </MenuItem>
+                    <MenuItem onClick={LogoutHandler}>Logout</MenuItem>
                   </Menu>
                 </>
               ) : (
