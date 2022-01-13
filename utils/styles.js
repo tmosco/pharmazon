@@ -54,7 +54,8 @@ const useStyles= makeStyles({
           color:'#f04040'
       },
       fullWidth:{
-width:'100%'
+width:'100%',
+color:"red"
       }
           
       

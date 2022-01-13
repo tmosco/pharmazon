@@ -18,13 +18,14 @@ import {
   Card,
   List,
   ListItem,
+  Button,
 } from '@material-ui/core';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import useStyles from '../../utils/styles';
 import { useSnackbar } from 'notistack';
 import { getError } from '../../utils/error';
-import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
+import { PaystackButton } from 'react-paystack';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -62,20 +63,19 @@ function reducer(state, action) {
 
 function Order({ params }) {
   const orderId = params.id;
-  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
   const classes = useStyles();
   const router = useRouter();
   const { state } = useContext(Store);
   const { userInfo } = state;
 
-  const [
-    { loading, error, order, successPay },
-    dispatch,
-  ] = useReducer(reducer, {
-    loading: true,
-    order: {},
-    error: '',
-  });
+  const [{ loading, error, order, successPay }, dispatch] = useReducer(
+    reducer,
+    {
+      loading: true,
+      order: {},
+      error: '',
+    }
+  );
   const {
     shippingAddress,
     paymentMethod,
@@ -106,76 +106,34 @@ function Order({ params }) {
     };
     if (!order._id || successPay || (order._id && order._id !== orderId)) {
       fetchOrder();
-      if(successPay){
-          dispatch({type:'PAY_RESET'});
+      if (successPay) {
+        dispatch({ type: 'PAY_RESET' });
       }
-    } else {
-      const loadPaypalScript = async () => {
-        const { data: clientId } = await axios.get('/api/keys/paypal', {
-          headers: { authorization: `Bearer ${userInfo.token}` },
-        });
-        paypalDispatch({
-          type: 'resetOptions',
-          value: {
-            'client-id': clientId,
-            currency: 'USD',
-          },
-        });
-        paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
-      };
-      loadPaypalScript();
-    }
+    } 
+
   }, [order, successPay]);
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar,closeSnackbar } = useSnackbar();
 
-  function createOrder(data, actions) {
-    return actions.order
-      .create({
-        purchase_units: [
-          {
-            amount: { value: totalPrice },
-          },
-        ],
-      })
-      .then((orderId) => {
-        return orderId;
-      });
-  }
+  const publicKey = "pk_test_c7c078588f201d0193f942b25ee3b2ec334f8e28";
+  const phone = '09060998169';
 
-  function onApprove(data, actions) {
-    return actions.order.capture().then(async function (details) {
-      try {
-        dispatch({ type: 'PAY_REQUEST' });
-        const { data } = await axios.put(
-          `/api/orders/${order._id}/pay`,
-          details,
-          {
-            headers: { authorization: `Bearer ${userInfo.token}` },
-          }
-        );
-        dispatch({ type: 'PAY_SUCCESS', payload: data });
-        enqueueSnackbar('Order is paid', { variant: 'success' });
-      } catch (err) {
-        dispatch({ type: 'PAY_FAIL', payload: getError(err) });
-        enqueueSnackbar(getError(err), { variant: 'error' });
-      }
-    });
-  }
+  const componentProps = {
+    email:userInfo.email,
+    amount: totalPrice * 100,
+    metadata: {
+      name:userInfo.name,
+      phone,
+    },
+    publicKey,
+    text: 'Place order',
+    onSuccess: () => enqueueSnackbar('Thanks for doing business with us! Come back soon!!', {variant:"success"}),
+   
+    
 
-
-
-
-
-
-
-  
-
-  function onError(err) {
-    enqueueSnackbar(getError(err), { variant: 'error' });
-  }
+  };
 
   return (
-    <Layout title={`Order ${orderId}`}> 
+    <Layout title={`Order ${orderId}`}>
       <Typography component="h1" variant="h1">
         Order {orderId}
       </Typography>
@@ -318,18 +276,14 @@ function Order({ params }) {
                 </ListItem>
                 {!isPaid && (
                   <ListItem>
-                    {isPending ? (
-                      <CircularProgress />
-                    ) : (
-                        <div className="{classes.fullWidth}">
+                    <div className="{classes.fullWidth}">
+                      <Button   fullWidth
+                      variant="contained"
+                      color="primary">place order
 
-                      <PayPalButtons
-                        createOrder={createOrder}
-                        onApprove={onApprove}
-                        onError={onError}
-                        ></PayPalButtons>
-                        </div>
-                    )}
+                      <PaystackButton className="{classes.fullWidth}" {...componentProps} />
+                      </Button>
+                    </div>
                   </ListItem>
                 )}
               </List>

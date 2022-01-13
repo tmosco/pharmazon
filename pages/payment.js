@@ -26,6 +26,9 @@ export default function Payment() {
   } = state;
   const [paymentMethod, setPaymentMethod] = useState('');
   const router = useRouter();
+
+
+
   useEffect(() => {
     if (!shippingAddress.address) {
       router.push('/shipping');

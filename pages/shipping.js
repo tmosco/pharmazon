@@ -41,7 +41,7 @@ export default function Shipping() {
   const classes = useStyles();
   function submitHandler({ fullName, address, city, postalCode, country }) {
     dispatch({
-      type: 'SAVE_SHIPPING',
+      type: 'SAVE_SHIPPING_ADDRESS',
       payload: { fullName, address, city, postalCode, country },
     });
     Cookies.set(
@@ -59,7 +59,7 @@ export default function Shipping() {
 
   return (
     <Layout title="Shipping Address ">
-        <CheckoutWizard activeStep={1}/>
+      <CheckoutWizard activeStep={1} />
       <form onSubmit={handleSubmit(submitHandler)} className={classes.form}>
         <Typography component="h1" variant="h1">
           Shipping Address

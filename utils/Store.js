@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie';
 import { createContext, useReducer } from 'react';
-import cart from '../pages/cart';
+
 
 export const Store = createContext();
 
