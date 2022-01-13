@@ -44,7 +44,7 @@ function OrderHistory() {
   const { state } = useContext(Store);
   const { userInfo } = state;
 
-  const [{ loading, error, orders, successDeliver }, dispatch] = useReducer(
+  const [{ loading, error, orders }, dispatch] = useReducer(
     reducer,
     {
       loading: true,
@@ -55,7 +55,7 @@ function OrderHistory() {
 
   useEffect(() => {
     if (!userInfo) {
-      router.push('/');
+      router.push('/login');
     }
     const fetchOrders = async () => {
       try {

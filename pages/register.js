@@ -12,10 +12,11 @@ import {
 import useStyles from '../utils/styles';
 import axios from 'axios';
 import { Store } from '../utils/Store';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import { Controller, useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
+import { getError } from '../utils/error';
 
 export default function Register() {
   const {
@@ -39,7 +40,7 @@ export default function Register() {
   async function submitHandler({ name, email, password, confirmPassword }) {
     if (password !== confirmPassword) {
       closeSnackbar();
-      enqueueSnackbar("Password don't match",{variant:'error'});
+      enqueueSnackbar("Password don't match", { variant: 'error' });
       return;
     }
     try {
@@ -53,10 +54,9 @@ export default function Register() {
       Cookies.set('userInfo', JSON.stringify(data));
       router.push(redirect || '/');
     } catch (err) {
-      err.response.data ? err.response.data.message : err.message,
-        {
-          variant: 'error',
-        };
+      enqueueSnackbar(getError(err), {
+        variant: 'error',
+      });
     }
   }
   return (

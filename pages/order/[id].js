@@ -15,7 +15,6 @@ import {
   TableCell,
   Link,
   CircularProgress,
-  Button,
   Card,
   List,
   ListItem,
@@ -70,7 +69,7 @@ function Order({ params }) {
   const { userInfo } = state;
 
   const [
-    { loading, error, order, successPay, loadingDeliver, successDeliver },
+    { loading, error, order, successPay },
     dispatch,
   ] = useReducer(reducer, {
     loading: true,
