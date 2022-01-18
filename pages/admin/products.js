@@ -32,7 +32,7 @@ function reducer(state, action) {
     case 'FETCH_REQUEST':
       return { ...state, loading: true, error: '' };
     case 'FETCH_SUCCESS':
-      return { ...state, loading: false, orders: action.payload, error: '' };
+      return { ...state, loading: false, Products: action.payload, error: '' };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
 
@@ -41,19 +41,18 @@ function reducer(state, action) {
   }
 }
 
-function AdminDashboard() {
+function AdminProduct() {
   const classes = useStyles();
   const router = useRouter();
   const { state } = useContext(Store);
   const { userInfo } = state;
 
-  const [{ loading, error, orders }, dispatch] = useReducer(reducer, {
+  const [{ loading, error, Products }, dispatch] = useReducer(reducer, {
     loading: true,
-    orders: [],
+    Products: [],
     error: '',
   });
 
-console.log(orders)
 
   useEffect(() => {
     if (!userInfo) {
@@ -62,7 +61,7 @@ console.log(orders)
     const fetchData = async () => {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
-        const { data } = await axios.get(`/api/admin/orders`, {
+        const { data } = await axios.get(`/api/admin/Products`, {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
@@ -73,7 +72,7 @@ console.log(orders)
     fetchData();
   }, []);
   return (
-    <Layout title="Order History">
+    <Layout title="Product History">
       <Grid container spacing={1}>
         <Grid item md={3} xs={12}>
           <Card className={classes.section}>
@@ -84,12 +83,12 @@ console.log(orders)
                 </ListItem>
               </NextLink>
               <NextLink href="/admin/orders" passHref>
-                <ListItem selected button component="a">
+                <ListItem  button component="a">
                   <ListItemText primary="Orders"></ListItemText>
                 </ListItem>
               </NextLink>
               <NextLink href="/admin/products" passHref>
-                <ListItem  button component="a">
+                <ListItem selected button component="a">
                   <ListItemText primary="Products"></ListItemText>
                 </ListItem>
               </NextLink>
@@ -101,7 +100,7 @@ console.log(orders)
             <List>
               <ListItem>
                 <Typography component="h1" variant="h1">
-                  Orders
+                  Products
                 </Typography>
               </ListItem>
               <ListItem>
@@ -115,33 +114,36 @@ console.log(orders)
                       <TableHead>
                         <TableRow>
                           <TableCell>ID</TableCell>
-                          <TableCell>USER</TableCell>
-                          <TableCell>DATE</TableCell>
-                          <TableCell>TOTAL</TableCell>
-                          <TableCell>PAID</TableCell>
-                          <TableCell>DELIVERED</TableCell>
-                          <TableCell>ACTION</TableCell>
+                          <TableCell>NAME</TableCell>
+                          <TableCell>PRICE</TableCell>
+                          <TableCell>CATEGORY</TableCell>
+                          <TableCell>COUNT</TableCell>
+                          <TableCell>RATING</TableCell>
+                          <TableCell>ACTIONS</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {orders.map((order) => (
-                          <TableRow key={order._id}>
-                            <TableCell>{order._id.substring(20, 24)}</TableCell>
-                            <TableCell>{order.user?order.user.name:"DELETED USER"}</TableCell>
-                            <TableCell>{order.createdAt}</TableCell>
-                            <TableCell>₦{order.totalPrice}</TableCell>
+                        {Products.map((Product) => (
+                          <TableRow key={Product._id}>
+                            <TableCell>{Product._id.substring(20, 24)}</TableCell>
+                            <TableCell>{Product.user?Product.user.name:"DELETED USER"}</TableCell>
+                            <TableCell>{Product.createdAt}</TableCell>
+                            <TableCell>₦{Product.totalPrice}</TableCell>
                             <TableCell>
-                              {order.isPaid
-                                ? `paid at ${order.paidAt}`
+                              {Product.isPaid
+                                ? `paid at ${Product.paidAt}`
                                 : 'not paid'}
                             </TableCell>
                             <TableCell>
-                              {order.isDelivered
-                                ? `delivered at ${order.deliveredAt}`
+                              {Product.isDelivered
+                                ? `delivered at ${Product.deliveredAt}`
                                 : 'not delivered'}
                             </TableCell>
                             <TableCell>
-                              <NextLink href={`/order/${order._id}`} passHref>
+                              <NextLink href="" passHref>
+                                <Button variant="contained">eDIT </Button>
+                              </NextLink>
+                              <NextLink href={`/Product/${Product._id}`} passHref>
                                 <Button variant="contained">Details </Button>
                               </NextLink>
                             </TableCell>
@@ -160,4 +162,4 @@ console.log(orders)
   );
 }
 
-export default dynamic(() => Promise.resolve(AdminDashboard), { ssr: false });
+export default dynamic(() => Promise.resolve(AdminProduct), { ssr: false });
