@@ -27,17 +27,16 @@ handler.get(async (req, res) => {
   ]);
   const ordersPrice =
     ordersPriceGroup.length > 0 ? ordersPriceGroup[0].sales : 0;
-//   const salesData = await Order.aggregate([
-//     {
-//       $group: {
-//         _id: { $dateToString: { format: '%Y-%m', date: 'createdAt' } },
-//         totalSales: { $sum: '$totalPrice' },
-//       },
-//     },
-//   ]);
-//   console.log(salesData)
+  const salesData = await Order.aggregate([
+    {
+      $group: {
+        _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } },
+        totalSales: { $sum: '$totalPrice' },
+      },
+    },
+  ]);
 
-  res.send({ ordersCount, productsCount, usersCount, ordersPrice,  });
+  res.send({ ordersCount, productsCount, usersCount, ordersPrice,salesData });
 });
 
 export default handler;

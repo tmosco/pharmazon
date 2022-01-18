@@ -25,7 +25,25 @@ import {
 } from '@material-ui/core';
 import Layout from '../../components/Layout';
 import { TableHead } from '@mui/material';
-import {Bar} from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 function reducer(state, action) {
   switch (action.type) {
@@ -191,7 +209,23 @@ function AdminDashboard() {
                   Sales Chart
                 </Typography>
               </ListItem>
-              <ListItem>Implement sales chart</ListItem>
+              <ListItem>
+                <Bar
+                  data={{
+                    labels: summary.salesData.map((x) => x._id),
+                    datasets: [
+                      {
+                        label: 'Sales',
+                        backgroundColor: 'rgba(162, 222, 208, 1)',
+                        data: summary.salesData.map((x) => x.totalSales),
+                      },
+                    ],
+                  }}
+                  options={{
+                    legend: { display: true, position: 'right' },
+                  }}
+                ></Bar>
+              </ListItem>
             </List>
           </Card>
         </Grid>
