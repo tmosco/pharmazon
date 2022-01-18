@@ -61,9 +61,10 @@ function AdminProduct() {
     const fetchData = async () => {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
-        const { data } = await axios.get(`/api/admin/Products`, {
+        const { data } = await axios.get(`/api/admin/products`, {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
+        console.log(data)
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
@@ -123,28 +124,21 @@ function AdminProduct() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {Products.map((Product) => (
-                          <TableRow key={Product._id}>
-                            <TableCell>{Product._id.substring(20, 24)}</TableCell>
-                            <TableCell>{Product.user?Product.user.name:"DELETED USER"}</TableCell>
-                            <TableCell>{Product.createdAt}</TableCell>
-                            <TableCell>₦{Product.totalPrice}</TableCell>
+                        {Products.map((product) => (
+                          <TableRow key={product._id}>
+                            <TableCell>{product._id.substring(20, 24)}</TableCell>
+                            <TableCell>{product.name}</TableCell>
+                            <TableCell>₦{product.price}</TableCell>
+                            <TableCell>{product.category}</TableCell>
+                            <TableCell>{product.countInStock}</TableCell>
+                            <TableCell>{product.rating}</TableCell>
+   
                             <TableCell>
-                              {Product.isPaid
-                                ? `paid at ${Product.paidAt}`
-                                : 'not paid'}
-                            </TableCell>
-                            <TableCell>
-                              {Product.isDelivered
-                                ? `delivered at ${Product.deliveredAt}`
-                                : 'not delivered'}
-                            </TableCell>
-                            <TableCell>
-                              <NextLink href="" passHref>
-                                <Button variant="contained">eDIT </Button>
-                              </NextLink>
-                              <NextLink href={`/Product/${Product._id}`} passHref>
-                                <Button variant="contained">Details </Button>
+                              <NextLink href={`/admin/product/${product._id}`} passHref>
+                                <Button size='small' variant="contained">Edit </Button>
+                              </NextLink>{"  "}
+                              <NextLink href={`/product/${product._id}`} passHref>
+                                <Button size="small" variant="contained">Delete </Button>
                               </NextLink>
                             </TableCell>
                           </TableRow>
