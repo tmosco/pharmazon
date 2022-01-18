@@ -20,9 +20,12 @@ import {
   TableCell,
   TableBody,
   ListItemText,
+  TableHead,
+
 } from '@material-ui/core';
 import Layout from '../../components/Layout';
-import { TableHead } from '@mui/material';
+
+
 
 function reducer(state, action) {
   switch (action.type) {
@@ -38,7 +41,7 @@ function reducer(state, action) {
   }
 }
 
-function AdminOrder() {
+function AdminDashboard() {
   const classes = useStyles();
   const router = useRouter();
   const { state } = useContext(Store);
@@ -50,14 +53,16 @@ function AdminOrder() {
     error: '',
   });
 
+console.log(orders)
+
   useEffect(() => {
     if (!userInfo) {
       router.push('/login');
     }
-    const fetchOrders = async () => {
+    const fetchData = async () => {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
-        const { data } = await axios.get(`/api/orders/history`, {
+        const { data } = await axios.get(`/api/admin/orders`, {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
@@ -65,7 +70,7 @@ function AdminOrder() {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
       }
     };
-    fetchOrders();
+    fetchData();
   }, []);
   return (
     <Layout title="Order History">
@@ -74,7 +79,7 @@ function AdminOrder() {
           <Card className={classes.section}>
             <List>
               <NextLink href="/admin/dashboard" passHref>
-                <ListItem button component="a">
+                <ListItem  button component="a">
                   <ListItemText primary="Admin Dashboard"></ListItemText>
                 </ListItem>
               </NextLink>
@@ -91,7 +96,7 @@ function AdminOrder() {
             <List>
               <ListItem>
                 <Typography component="h1" variant="h1">
-                  Orders 
+                  Orders
                 </Typography>
               </ListItem>
               <ListItem>
@@ -117,7 +122,7 @@ function AdminOrder() {
                         {orders.map((order) => (
                           <TableRow key={order._id}>
                             <TableCell>{order._id.substring(20, 24)}</TableCell>
-                            <TableCell>{order.name}</TableCell>
+                            <TableCell>{order.user?order.user.name:"DELETED USER"}</TableCell>
                             <TableCell>{order.createdAt}</TableCell>
                             <TableCell>₦{order.totalPrice}</TableCell>
                             <TableCell>
@@ -150,4 +155,4 @@ function AdminOrder() {
   );
 }
 
-export default dynamic(() => Promise.resolve(AdminOrder), { ssr: false });
+export default dynamic(() => Promise.resolve(AdminDashboard), { ssr: false });

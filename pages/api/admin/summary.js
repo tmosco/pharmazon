@@ -2,7 +2,7 @@ import nc from 'next-connect';
 import Order from '../../../models/order';
 import User from '../../../models/user';
 import Product from '../../../models/product';
-import { isAuth , isAdmin} from '../../../utils/auth';
+import { isAuth, isAdmin } from '../../../utils/auth';
 import db from '../../../utils/db';
 import { onError } from '../../../utils/error';
 
@@ -35,8 +35,8 @@ handler.get(async (req, res) => {
       },
     },
   ]);
-
-  res.send({ ordersCount, productsCount, usersCount, ordersPrice,salesData });
+  await db.disconnect();
+  res.send({ ordersCount, productsCount, usersCount, ordersPrice, salesData });
 });
 
 export default handler;
