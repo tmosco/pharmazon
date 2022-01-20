@@ -64,7 +64,6 @@ function Profile() {
           },
         }
       );
-    //   console.log(data);
       dispatch({ type: 'USER_LOGIN', payload: data });
       Cookies.set('userInfo', JSON.stringify(data));
       enqueueSnackbar('Profile updated successfully', { variant: 'success' });

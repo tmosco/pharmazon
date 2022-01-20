@@ -53,8 +53,6 @@ function AdminDashboard() {
     error: '',
   });
 
-console.log(orders)
-
   useEffect(() => {
     if (!userInfo) {
       router.push('/login');

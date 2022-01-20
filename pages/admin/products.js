@@ -21,11 +21,8 @@ import {
   TableBody,
   ListItemText,
   TableHead,
-
 } from '@material-ui/core';
 import Layout from '../../components/Layout';
-
-
 
 function reducer(state, action) {
   switch (action.type) {
@@ -35,6 +32,12 @@ function reducer(state, action) {
       return { ...state, loading: false, Products: action.payload, error: '' };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
+    case 'CREATE_REQUEST':
+      return { ...state, loadingCreate: true, error: '' };
+    case 'CREATE_SUCCESS':
+      return { ...state, loadingCreate: false };
+    case 'CREATE_FAIL':
+      return { ...state, loadingCreate: false };
 
     default:
       state;
@@ -47,12 +50,14 @@ function AdminProduct() {
   const { state } = useContext(Store);
   const { userInfo } = state;
 
-  const [{ loading, error, Products }, dispatch] = useReducer(reducer, {
-    loading: true,
-    Products: [],
-    error: '',
-  });
-
+  const [{ loading, error, Products, loadingCreate }, dispatch] = useReducer(
+    reducer,
+    {
+      loading: true,
+      Products: [],
+      error: '',
+    }
+  );
 
   useEffect(() => {
     if (!userInfo) {
@@ -64,7 +69,6 @@ function AdminProduct() {
         const { data } = await axios.get(`/api/admin/products`, {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
-        console.log(data)
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
@@ -72,6 +76,8 @@ function AdminProduct() {
     };
     fetchData();
   }, []);
+
+  function createHandler() {}
   return (
     <Layout title="Product History">
       <Grid container spacing={1}>
@@ -79,12 +85,12 @@ function AdminProduct() {
           <Card className={classes.section}>
             <List>
               <NextLink href="/admin/dashboard" passHref>
-                <ListItem  button component="a">
+                <ListItem button component="a">
                   <ListItemText primary="Admin Dashboard"></ListItemText>
                 </ListItem>
               </NextLink>
               <NextLink href="/admin/orders" passHref>
-                <ListItem  button component="a">
+                <ListItem button component="a">
                   <ListItemText primary="Orders"></ListItemText>
                 </ListItem>
               </NextLink>
@@ -100,9 +106,22 @@ function AdminProduct() {
           <Card className={classes.section}>
             <List>
               <ListItem>
-                <Typography component="h1" variant="h1">
-                  Products
-                </Typography>
+                <Grid container>
+                  <Grid item md={9} xs={12}>
+                    <Typography component="h1" variant="h1">
+                      Products
+                    </Typography>
+                  </Grid>
+                  <Grid item md={3} xs={12}>
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      onClick={createHandler}
+                    >
+                      Create
+                    </Button>
+                  </Grid>
+                </Grid>
               </ListItem>
               <ListItem>
                 {loading ? (
@@ -126,19 +145,32 @@ function AdminProduct() {
                       <TableBody>
                         {Products.map((product) => (
                           <TableRow key={product._id}>
-                            <TableCell>{product._id.substring(20, 24)}</TableCell>
+                            <TableCell>
+                              {product._id.substring(20, 24)}
+                            </TableCell>
                             <TableCell>{product.name}</TableCell>
                             <TableCell>₦{product.price}</TableCell>
                             <TableCell>{product.category}</TableCell>
                             <TableCell>{product.countInStock}</TableCell>
                             <TableCell>{product.rating}</TableCell>
-   
+
                             <TableCell>
-                              <NextLink href={`/admin/product/${product._id}`} passHref>
-                                <Button size='small' variant="contained">Edit </Button>
-                              </NextLink>{"  "}
-                              <NextLink href={`/product/${product._id}`} passHref>
-                                <Button size="small" variant="contained">Delete </Button>
+                              <NextLink
+                                href={`/admin/product/${product._id}`}
+                                passHref
+                              >
+                                <Button size="small" variant="contained">
+                                  Edit{' '}
+                                </Button>
+                              </NextLink>
+                              {'  '}
+                              <NextLink
+                                href={`/product/${product._id}`}
+                                passHref
+                              >
+                                <Button size="small" variant="contained">
+                                  Delete{' '}
+                                </Button>
                               </NextLink>
                             </TableCell>
                           </TableRow>
