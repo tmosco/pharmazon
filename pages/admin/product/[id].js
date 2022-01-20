@@ -36,6 +36,12 @@ function reducer(state, action) {
       return { ...state, loadingUpdate: false, errorUpdate: '' };
     case 'UPDATE_FAIL':
       return { ...state, loadingUpdate: false, errorUpdate: action.payload };
+    case 'UPLOAD_REQUEST':
+      return { ...state, loadingUpload: true, errorUpload: '' };
+    case 'UPLOAD_SUCCESS':
+      return { ...state, loadingUpload: false, errorUpload: '' };
+    case 'UPLOAD_FAIL':
+      return { ...state, loadingUpload: false, errorUpload: action.payload };
     default:
       return state;
   }
@@ -46,10 +52,11 @@ function ProductEdit({ params }) {
   const classes = useStyles();
   const router = useRouter();
   const { state } = useContext(Store);
-  const [{ loading, error ,loadingUpdate}, dispatch] = useReducer(reducer, {
-    loading: true,
-    error: '',
-  });
+  const [{ loading, error, loadingUpdate, loadingUpload }, dispatch] =
+    useReducer(reducer, {
+      loading: true,
+      error: '',
+    });
   const { userInfo } = state;
   const {
     handleSubmit,
@@ -86,6 +93,27 @@ function ProductEdit({ params }) {
     }
   }, []);
 
+  async function uploadHandler(e) {
+    const file = e.target.files[0];
+    const bodyFormData = new FormData();
+    bodyFormData.append('file', file);
+    try {
+      dispatch({ type: 'UPLOAD_REQUEST' });
+      const { data } = await axios.post('/api/admin/upload', bodyFormData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+            authorization: `Bearer ${userInfo.token}`,
+        },
+    });
+    dispatch({ type: 'UPLOAD_SUCCESS' });
+    setValue('image', data.secure_url);
+    enqueueSnackbar('File uploaded successfully', { variant: 'success' });
+} catch (err) {
+    dispatch({ type: 'UPLOAD_FAIL', payload: getError(err) });
+    enqueueSnackbar(getError(err), { variant: 'error' });
+    }
+  }
+
   async function submitHandler({
     name,
     slug,
@@ -120,9 +148,9 @@ function ProductEdit({ params }) {
       dispatch({ type: 'UPDATE_SUCCESS' });
 
       enqueueSnackbar('Product updated successfully', { variant: 'success' });
-      router.push('/admin/products')
+      router.push('/admin/products');
     } catch (err) {
-      dispatch({ type: 'UPDATE_FAIL' });
+      dispatch({ type: 'UPDATE_FAIL', payload: getError(err) });
       enqueueSnackbar(getError(err), { variant: 'error' });
     }
   }
@@ -258,6 +286,13 @@ function ProductEdit({ params }) {
                       ></Controller>
                     </ListItem>
                     <ListItem>
+                      <Button variant="contained" component="label">
+                        Upload File
+                        <input type="file" onChange={uploadHandler} hidden />
+                      </Button>
+                      {loadingUpload && <CircularProgress />}
+                    </ListItem>
+                    <ListItem>
                       <Controller
                         name="category"
                         control={control}
@@ -362,7 +397,7 @@ function ProductEdit({ params }) {
                         Update
                       </Button>
                     </ListItem>
-                    {loadingUpdate && <CircularProgress/>}
+                    {loadingUpdate && <CircularProgress />}
                   </List>
                 </form>
               </ListItem>
