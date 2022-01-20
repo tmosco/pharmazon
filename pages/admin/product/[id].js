@@ -22,7 +22,6 @@ import {
 import Layout from '../../../components/Layout';
 import { useSnackbar } from 'notistack';
 
-
 function reducer(state, action) {
   switch (action.type) {
     case 'FETCH_REQUEST':
@@ -31,6 +30,12 @@ function reducer(state, action) {
       return { ...state, loading: false, error: '' };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
+    case 'UPDATE_REQUEST':
+      return { ...state, loadingUpdate: true, errorUpdate: '' };
+    case 'UPDATE_SUCCESS':
+      return { ...state, loadingUpdate: false, errorUpdate: '' };
+    case 'UPDATE_FAIL':
+      return { ...state, loadingUpdate: false, errorUpdate: action.payload };
     default:
       return state;
   }
@@ -41,7 +46,7 @@ function ProductEdit({ params }) {
   const classes = useStyles();
   const router = useRouter();
   const { state } = useContext(Store);
-  const [{ loading, error },dispatch] = useReducer(reducer, {
+  const [{ loading, error ,loadingUpdate}, dispatch] = useReducer(reducer, {
     loading: true,
     error: '',
   });
@@ -81,12 +86,30 @@ function ProductEdit({ params }) {
     }
   }, []);
 
-  async function submitHandler({ name }) {
+  async function submitHandler({
+    name,
+    slug,
+    price,
+    image,
+    category,
+    brand,
+    countInStock,
+    description,
+  }) {
+    closeSnackbar();
     try {
-      const { data } = await axios.put(
+      dispatch({ type: 'UPDATE_REQUEST' });
+      await axios.put(
         `/api/admin/products/${productId}`,
         {
           name,
+          slug,
+          price,
+          image,
+          category,
+          brand,
+          countInStock,
+          description,
         },
         {
           headers: {
@@ -94,8 +117,12 @@ function ProductEdit({ params }) {
           },
         }
       );
+      dispatch({ type: 'UPDATE_SUCCESS' });
+
       enqueueSnackbar('Product updated successfully', { variant: 'success' });
+      router.push('/admin/products')
     } catch (err) {
+      dispatch({ type: 'UPDATE_FAIL' });
       enqueueSnackbar(getError(err), { variant: 'error' });
     }
   }
@@ -335,6 +362,7 @@ function ProductEdit({ params }) {
                         Update
                       </Button>
                     </ListItem>
+                    {loadingUpdate && <CircularProgress/>}
                   </List>
                 </form>
               </ListItem>
