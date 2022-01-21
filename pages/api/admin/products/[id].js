@@ -14,7 +14,6 @@ handler.get(async (req, res) => {
   res.send(product);
 });
 
-
 handler.put(async (req, res) => {
   await db.connect();
   const product = await Product.findById(req.query.id);
@@ -30,6 +29,19 @@ handler.put(async (req, res) => {
     await product.save();
     await db.disconnect();
     res.send({ message: 'Product Updated Successfully' });
+  } else {
+    await db.disconnect();
+    res.status(404).send({ message: 'Product Not Found' });
+  }
+});
+
+handler.delete(async (req, res) => {
+  await db.connect();
+  const product = await Product.findById(req.query.id);
+  if (product) {
+    await product.remove();
+    await db.disconnect();
+    res.send({ message: 'Product Deleted', product });
   } else {
     await db.disconnect();
     res.status(404).send({ message: 'Product Not Found' });

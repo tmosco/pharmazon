@@ -6,6 +6,7 @@ import { getError } from '../../utils/error';
 import { Store } from '../../utils/Store';
 import useStyles from '../../utils/styles';
 import NextLink from 'next/link';
+import { useSnackbar } from 'notistack';
 import {
   Grid,
   TableContainer,
@@ -29,7 +30,7 @@ function reducer(state, action) {
     case 'FETCH_REQUEST':
       return { ...state, loading: true, error: '' };
     case 'FETCH_SUCCESS':
-      return { ...state, loading: false, Products: action.payload, error: '' };
+      return { ...state, loading: false, products: action.payload, error: '' };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
     case 'CREATE_REQUEST':
@@ -38,6 +39,14 @@ function reducer(state, action) {
       return { ...state, loadingCreate: false };
     case 'CREATE_FAIL':
       return { ...state, loadingCreate: false };
+    case 'DELETE_REQUEST':
+      return { ...state, loadingDelete: true, error: '' };
+    case 'DELETE_SUCCESS':
+      return { ...state, loadingDelete: false, successDelete: true };
+    case 'DELETE_FAIL':
+      return { ...state, loadingDelete: false };
+    case 'DELETE_RESET':
+      return { ...state, loadingDelete: false, successDelete: false };
 
     default:
       state;
@@ -49,15 +58,16 @@ function AdminProduct() {
   const router = useRouter();
   const { state } = useContext(Store);
   const { userInfo } = state;
+  const { enqueueSnackbar} = useSnackbar();
 
-  const [{ loading, error, Products, loadingCreate }, dispatch] = useReducer(
-    reducer,
-    {
-      loading: true,
-      Products: [],
-      error: '',
-    }
-  );
+  const [
+    { loading, error, products, loadingCreate, loadingDelete, successDelete },
+    dispatch,
+  ] = useReducer(reducer, {
+    loading: true,
+    products: [],
+    error: '',
+  });
 
   useEffect(() => {
     if (!userInfo) {
@@ -74,10 +84,51 @@ function AdminProduct() {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
       }
     };
-    fetchData();
-  }, []);
+    if (successDelete) {
+      dispatch({ type: 'DELETE_RESET' });
+    } else {
+      fetchData();
+    }
+  }, [successDelete]);
 
-  function createHandler() {}
+  async function createHandler() {
+    if (!window.confirm('Are you sure?')) {
+      return;
+    }
+    try {
+      dispatch({ type: 'CREATE_REQUEST' });
+      const { data } = await axios.post(
+        `/api/admin/products`,
+        {},
+        {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        }
+      );
+      dispatch({ type: 'CREATE_SUCCESS' });
+      enqueueSnackbar('Product created successfully', { variant: 'success' });
+      router.push(`/admin/product/${data.product._id}`);
+    } catch (err) {
+      dispatch({ type: 'CREATE_FAIL' });
+      enqueueSnackbar(getError(err), { variant: 'error' });
+    }
+  }
+
+  const deleteHandler = async (productId) => {
+    if (!window.confirm('Are you sure?')) {
+      return;
+    }
+    try {
+      dispatch({ type: 'DELETE_REQUEST' });
+      await axios.delete(`/api/admin/products/${productId}`, {
+        headers: { authorization: `Bearer ${userInfo.token}` },
+      });
+      dispatch({ type: 'DELETE_SUCCESS' });
+      enqueueSnackbar('Product deleted successfully', { variant: 'success' });
+    } catch (err) {
+      dispatch({ type: 'DELETE_FAIL' });
+      enqueueSnackbar(getError(err), { variant: 'error' });
+    }
+  };
   return (
     <Layout title="Product History">
       <Grid container spacing={1}>
@@ -107,12 +158,13 @@ function AdminProduct() {
             <List>
               <ListItem>
                 <Grid container>
-                  <Grid item md={9} xs={12}>
+                  <Grid alignItems="center" item md={6} xs={12}>
                     <Typography component="h1" variant="h1">
                       Products
                     </Typography>
+                    {loadingDelete && <CircularProgress />}
                   </Grid>
-                  <Grid item md={3} xs={12}>
+                  <Grid align="right" item md={6} xs={12}>
                     <Button
                       color="primary"
                       variant="contained"
@@ -120,6 +172,7 @@ function AdminProduct() {
                     >
                       Create
                     </Button>
+                    {loadingCreate && <CircularProgress />}
                   </Grid>
                 </Grid>
               </ListItem>
@@ -143,7 +196,7 @@ function AdminProduct() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {Products.map((product) => (
+                        {products.map((product) => (
                           <TableRow key={product._id}>
                             <TableCell>
                               {product._id.substring(20, 24)}
@@ -163,15 +216,14 @@ function AdminProduct() {
                                   Edit{' '}
                                 </Button>
                               </NextLink>
-                              {'  '}
-                              <NextLink
-                                href={`/product/${product._id}`}
-                                passHref
+
+                              <Button
+                                onClick={() => deleteHandler(product._id)}
+                                size="small"
+                                variant="contained"
                               >
-                                <Button size="small" variant="contained">
-                                  Delete{' '}
-                                </Button>
-                              </NextLink>
+                                Delete{' '}
+                              </Button>
                             </TableCell>
                           </TableRow>
                         ))}
