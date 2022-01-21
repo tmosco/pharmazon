@@ -89,7 +89,7 @@ function AllUsers() {
     }
     try {
       dispatch({ type: 'DELETE_REQUEST' });
-      await axios.delete(`/api/admin/users/${userId}`, {
+      await axios.delete(`/api/admin/user/${userId}`, {
         headers: { authorization: `Bearer ${userInfo.token}` },
       });
       dispatch({ type: 'DELETE_SUCCESS' });
@@ -166,7 +166,7 @@ function AllUsers() {
 
                             <TableCell>
                               <NextLink
-                                href={`/admin/users/${user._id}`}
+                                href={`/admin/user/${user._id}`}
                                 passHref
                               >
                                 <Button size="small" variant="contained">

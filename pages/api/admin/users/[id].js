@@ -9,9 +9,9 @@ handler.use(isAuth, isAdmin);
 
 handler.get(async (req, res) => {
   await db.connect();
-  const product = await User.findById(req.query.id);
+  const user = await User.findById(req.query.id);
   await db.disconnect();
-  res.send(product);
+  res.send(user);
 });
 
 handler.put(async (req, res) => {
@@ -19,10 +19,7 @@ handler.put(async (req, res) => {
   const user = await User.findById(req.query.id);
   if (user) {
     user.name = req.body.name;
-    user.email = req.body.email;
-    user.isAdmin = req.body.isAdmin;
-
-
+    user.isAdmin = Boolean(req.body.isAdmin);
     await user.save();
     await db.disconnect();
     res.send({ message: 'User Updated Successfully' });
@@ -34,11 +31,11 @@ handler.put(async (req, res) => {
 
 handler.delete(async (req, res) => {
   await db.connect();
-  const product = await User.findById(req.query.id);
-  if (product) {
-    await product.remove();
+  const user = await User.findById(req.query.id);
+  if (user) {
+    await user.remove();
     await db.disconnect();
-    res.send({ message: 'User Deleted', product });
+    res.send({ message: 'User Deleted', user });
   } else {
     await db.disconnect();
     res.status(404).send({ message: 'User Not Found' });
