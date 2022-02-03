@@ -76,15 +76,15 @@ export default function Login() {
                   id="email"
                   label="Email"
                   inputProps={{ type: 'email' }}
-                  {...field}
                   error={Boolean(errors.email)}
                   helperText={
                     errors.email
-                      ? errors.email.type === 'pattern'
-                        ? 'Email is not valid'
-                        : 'Email is required'
-                      : ''
+                    ? errors.email.type === 'pattern'
+                    ? 'Email is not valid'
+                    : 'Email is required'
+                    : ''
                   }
+                  {...field}
                 ></TextField>
               )}
             ></Controller>
@@ -105,15 +105,15 @@ export default function Login() {
                   id="password"
                   label="Password"
                   inputProps={{ type: 'password' }}
-                  {...field}
                   error={Boolean(errors.password)}
                   helperText={
                     errors.password
-                      ? errors.password.type === 'minLength'
-                        ? 'Password length is more than 5'
-                        : 'Password is required'
-                      : ''
+                    ? errors.password.type === 'minLength'
+                    ? 'Password length is more than 5'
+                    : 'Password is required'
+                    : ''
                   }
+                  {...field}
                 ></TextField>
               )}
             ></Controller>

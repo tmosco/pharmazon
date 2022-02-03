@@ -81,16 +81,16 @@ export default function Register() {
                   fullWidth
                   id="name"
                   label="Name"
-                  inputProps={{ type: 'text' }}
-                  {...field}
+                  inputProps={{ type: 'name' }}
                   error={Boolean(errors.name)}
                   helperText={
-                    errors.email
-                      ? errors.name.type === 'minLength'
-                        ? 'Name length is more than 1'
-                        : 'Name is required'
-                      : ''
+                    errors.name
+                    ? errors.name.type === 'minLength'
+                    ? 'Name length is more than 1'
+                    : 'Name is required'
+                    : ''
                   }
+                  {...field}
                 ></TextField>
               )}
             ></Controller>
@@ -111,15 +111,15 @@ export default function Register() {
                   id="email"
                   label="Email"
                   inputProps={{ type: 'email' }}
-                  {...field}
                   error={Boolean(errors.email)}
                   helperText={
                     errors.email
-                      ? errors.email.type === 'pattern'
-                        ? 'Email is not valid'
-                        : 'Email is required'
-                      : ''
+                    ? errors.email.type === 'pattern'
+                    ? 'Email is not valid'
+                    : 'Email is required'
+                    : ''
                   }
+                  {...field}
                 ></TextField>
               )}
             ></Controller>
@@ -140,15 +140,15 @@ export default function Register() {
                   id="password"
                   label="Password"
                   inputProps={{ type: 'password' }}
-                  {...field}
                   error={Boolean(errors.password)}
                   helperText={
                     errors.password
-                      ? errors.password.type === 'minLength'
-                        ? 'Password length is more than 5'
-                        : 'Password is required'
-                      : ''
+                    ? errors.password.type === 'minLength'
+                    ? 'Password length should be atleast 6 character'
+                    : 'Password is required'
+                    : ''
                   }
+                  {...field}
                 ></TextField>
               )}
             ></Controller>
@@ -169,15 +169,15 @@ export default function Register() {
                   id="confirmPassword"
                   label="Confirm Password"
                   inputProps={{ type: 'password' }}
-                  {...field}
                   error={Boolean(errors.confirmPassword)}
                   helperText={
                     errors.password
-                      ? errors.confirmPassword.type === 'minLength'
-                        ? 'Confirm password length is more than 5'
-                        : 'Confirm password is required'
-                      : ''
+                    ? errors.confirmPassword.type === 'minLength'
+                    ? 'Confirm password length should be atleast 6 character'
+                    : 'Confirm password is required'
+                    : ''
                   }
+                  {...field}
                 ></TextField>
               )}
             ></Controller>
