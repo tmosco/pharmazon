@@ -162,7 +162,7 @@ function PlaceOrder() {
                             <Typography>{item.quantity}</Typography>
                           </TableCell>
                           <TableCell align="right">
-                            <Typography>${item.price}</Typography>
+                            <Typography>₦{item.price}</Typography>
                           </TableCell>
                         </TableRow>
                       ))}
