@@ -1,13 +1,9 @@
 import React, { useContext } from 'react';
 import { useRouter } from 'next/router';
-import Head from 'next/head';
-import Image from 'next/image';
-import styles from '../styles/Home.module.css';
 import Layout from '../components/Layout';
 import useStyles from '../utils/styles';
 import NextLink from 'next/link';
 import Product from '../models/product';
-import data from '../utils/data';
 import db from '../utils/db';
 import axios from 'axios';
 import { Store } from '../utils/Store';

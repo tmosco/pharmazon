@@ -19,7 +19,6 @@ import {
   TextField,
   CircularProgress,
   Checkbox,
-  FormControl,
   FormControlLabel,
 } from '@material-ui/core';
 import Layout from '../../../components/Layout';
