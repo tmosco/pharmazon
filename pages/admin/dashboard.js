@@ -1,43 +1,25 @@
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import React, { useEffect, useContext, useReducer } from 'react';
-import { getError } from '../../utils/error';
-import { Store } from '../../utils/Store';
-import useStyles from '../../utils/styles';
 import NextLink from 'next/link';
+import React, { useEffect, useContext, useReducer } from 'react';
 import {
-  Grid,
-  Typography,
   CircularProgress,
-  Button,
-  Card,
+  Grid,
   List,
   ListItem,
+  Typography,
+  Card,
+  Button,
   ListItemText,
   CardContent,
   CardActions,
 } from '@material-ui/core';
-import Layout from '../../components/Layout';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+import { getError } from '../../utils/error';
+import { Store } from '../../utils/Store';
+import Layout from '../../components/Layout';
+import useStyles from '../../utils/styles';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -47,16 +29,15 @@ function reducer(state, action) {
       return { ...state, loading: false, summary: action.payload, error: '' };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
-
     default:
       state;
   }
 }
 
 function AdminDashboard() {
-  const classes = useStyles();
-  const router = useRouter();
   const { state } = useContext(Store);
+  const router = useRouter();
+  const classes = useStyles();
   const { userInfo } = state;
 
   const [{ loading, error, summary }, dispatch] = useReducer(reducer, {
@@ -83,28 +64,28 @@ function AdminDashboard() {
     fetchData();
   }, []);
   return (
-    <Layout title="Order History">
+    <Layout title="Admin Dashboard">
       <Grid container spacing={1}>
         <Grid item md={3} xs={12}>
           <Card className={classes.section}>
             <List>
               <NextLink href="/admin/dashboard" passHref>
-                <ListItem  selected button component="a">
+                <ListItem selected button component="a">
                   <ListItemText primary="Admin Dashboard"></ListItemText>
                 </ListItem>
               </NextLink>
               <NextLink href="/admin/orders" passHref>
-                <ListItem  button component="a">
+                <ListItem button component="a">
                   <ListItemText primary="Orders"></ListItemText>
                 </ListItem>
               </NextLink>
               <NextLink href="/admin/products" passHref>
-                <ListItem  button component="a">
+                <ListItem button component="a">
                   <ListItemText primary="Products"></ListItemText>
                 </ListItem>
               </NextLink>
               <NextLink href="/admin/users" passHref>
-                <ListItem  button component="a">
+                <ListItem button component="a">
                   <ListItemText primary="Users"></ListItemText>
                 </ListItem>
               </NextLink>
@@ -125,16 +106,12 @@ function AdminDashboard() {
                       <Card raised>
                         <CardContent>
                           <Typography variant="h1">
-                            ₦{summary.ordersPrice}
+                            ${summary.ordersPrice}
                           </Typography>
                           <Typography>Sales</Typography>
                         </CardContent>
                         <CardActions>
-                          <NextLink
-                            href="/admin/orders"
-                            color="primary"
-                            passHref
-                          >
+                          <NextLink href="/admin/orders" passHref>
                             <Button size="small" color="primary">
                               View sales
                             </Button>
@@ -151,11 +128,7 @@ function AdminDashboard() {
                           <Typography>Orders</Typography>
                         </CardContent>
                         <CardActions>
-                          <NextLink
-                            href="/admin/orders"
-                            color="primary"
-                            passHref
-                          >
+                          <NextLink href="/admin/orders" passHref>
                             <Button size="small" color="primary">
                               View orders
                             </Button>
@@ -172,13 +145,9 @@ function AdminDashboard() {
                           <Typography>Products</Typography>
                         </CardContent>
                         <CardActions>
-                          <NextLink
-                            href="/admin/products"
-                            color="primary"
-                            passHref
-                          >
+                          <NextLink href="/admin/products" passHref>
                             <Button size="small" color="primary">
-                              View product
+                              View products
                             </Button>
                           </NextLink>
                         </CardActions>
@@ -193,11 +162,7 @@ function AdminDashboard() {
                           <Typography>Users</Typography>
                         </CardContent>
                         <CardActions>
-                          <NextLink
-                            href="/admin/users"
-                            color="primary"
-                            passHref
-                          >
+                          <NextLink href="/admin/users" passHref>
                             <Button size="small" color="primary">
                               View users
                             </Button>

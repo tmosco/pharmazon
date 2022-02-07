@@ -1,18 +1,18 @@
-import React, { useContext, useEffect } from 'react';
-import Layout from '../components/Layout';
-import NextLink from 'next/link';
 import {
-  Button,
-  Link,
   List,
   ListItem,
-  TextField,
   Typography,
+  TextField,
+  Button,
+  Link,
 } from '@material-ui/core';
-import useStyles from '../utils/styles';
 import axios from 'axios';
-import { Store } from '../utils/Store';
 import { useRouter } from 'next/router';
+import NextLink from 'next/link';
+import React, { useContext, useEffect } from 'react';
+import Layout from '../components/Layout';
+import { Store } from '../utils/Store';
+import useStyles from '../utils/styles';
 import Cookies from 'js-cookie';
 import { Controller, useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
@@ -27,7 +27,6 @@ export default function Register() {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const router = useRouter();
   const { redirect } = router.query;
-
   const { state, dispatch } = useContext(Store);
   const { userInfo } = state;
   useEffect(() => {
@@ -37,10 +36,10 @@ export default function Register() {
   }, []);
 
   const classes = useStyles();
-  async function submitHandler({ name, email, password, confirmPassword }) {
+  const submitHandler = async ({ name, email, password, confirmPassword }) => {
+    closeSnackbar();
     if (password !== confirmPassword) {
-      closeSnackbar();
-      enqueueSnackbar("Password don't match", { variant: 'error' });
+      enqueueSnackbar("Passwords don't match", { variant: 'error' });
       return;
     }
     try {
@@ -48,17 +47,14 @@ export default function Register() {
         name,
         email,
         password,
-        confirmPassword,
       });
       dispatch({ type: 'USER_LOGIN', payload: data });
-      Cookies.set('userInfo', JSON.stringify(data));
+      Cookies.set('userInfo', data);
       router.push(redirect || '/');
     } catch (err) {
-      enqueueSnackbar(getError(err), {
-        variant: 'error',
-      });
+      enqueueSnackbar(getError(err), { variant: 'error' });
     }
-  }
+  };
   return (
     <Layout title="Register">
       <form onSubmit={handleSubmit(submitHandler)} className={classes.form}>
@@ -85,10 +81,10 @@ export default function Register() {
                   error={Boolean(errors.name)}
                   helperText={
                     errors.name
-                    ? errors.name.type === 'minLength'
-                    ? 'Name length is more than 1'
-                    : 'Name is required'
-                    : ''
+                      ? errors.name.type === 'minLength'
+                        ? 'Name length is more than 1'
+                        : 'Name is required'
+                      : ''
                   }
                   {...field}
                 ></TextField>
@@ -114,10 +110,10 @@ export default function Register() {
                   error={Boolean(errors.email)}
                   helperText={
                     errors.email
-                    ? errors.email.type === 'pattern'
-                    ? 'Email is not valid'
-                    : 'Email is required'
-                    : ''
+                      ? errors.email.type === 'pattern'
+                        ? 'Email is not valid'
+                        : 'Email is required'
+                      : ''
                   }
                   {...field}
                 ></TextField>
@@ -143,10 +139,10 @@ export default function Register() {
                   error={Boolean(errors.password)}
                   helperText={
                     errors.password
-                    ? errors.password.type === 'minLength'
-                    ? 'Password length should be atleast 6 character'
-                    : 'Password is required'
-                    : ''
+                      ? errors.password.type === 'minLength'
+                        ? 'Password length is more than 5'
+                        : 'Password is required'
+                      : ''
                   }
                   {...field}
                 ></TextField>
@@ -171,11 +167,11 @@ export default function Register() {
                   inputProps={{ type: 'password' }}
                   error={Boolean(errors.confirmPassword)}
                   helperText={
-                    errors.password
-                    ? errors.confirmPassword.type === 'minLength'
-                    ? 'Confirm password length should be atleast 6 character'
-                    : 'Confirm password is required'
-                    : ''
+                    errors.confirmPassword
+                      ? errors.confirmPassword.type === 'minLength'
+                        ? 'Confirm Password length is more than 5'
+                        : 'Confirm  Password is required'
+                      : ''
                   }
                   {...field}
                 ></TextField>
@@ -190,7 +186,7 @@ export default function Register() {
           <ListItem>
             Already have an account? &nbsp;
             <NextLink href={`/login?redirect=${redirect || '/'}`} passHref>
-              <Link> Login</Link>
+              <Link>Login</Link>
             </NextLink>
           </ListItem>
         </List>

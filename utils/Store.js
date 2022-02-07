@@ -1,9 +1,7 @@
 import Cookies from 'js-cookie';
 import { createContext, useReducer } from 'react';
-import cart from '../pages/cart';
 
 export const Store = createContext();
-
 const initialState = {
   darkMode: Cookies.get('darkMode') === 'ON' ? true : false,
   cart: {
@@ -12,7 +10,7 @@ const initialState = {
       : [],
     shippingAddress: Cookies.get('shippingAddress')
       ? JSON.parse(Cookies.get('shippingAddress'))
-      : [],
+      : { location: {} },
     paymentMethod: Cookies.get('paymentMethod')
       ? Cookies.get('paymentMethod')
       : '',
@@ -20,9 +18,6 @@ const initialState = {
   userInfo: Cookies.get('userInfo')
     ? JSON.parse(Cookies.get('userInfo'))
     : null,
-  // paymentMethod:
-
-  // darkMode:false
 };
 
 function reducer(state, action) {
@@ -51,34 +46,47 @@ function reducer(state, action) {
       Cookies.set('cartItems', JSON.stringify(cartItems));
       return { ...state, cart: { ...state.cart, cartItems } };
     }
-    case 'SAVE_SHIPPING_ADDRESS': {
+    case 'SAVE_SHIPPING_ADDRESS':
       return {
         ...state,
-        cart: { ...state.cart, shippingAddress: action.payload },
+        cart: {
+          ...state.cart,
+          shippingAddress: {
+            ...state.cart.shippingAddress,
+            ...action.payload,
+          },
+        },
       };
-    }
-    case 'SAVE_PAYMENT_METHOD': {
+    case 'SAVE_SHIPPING_ADDRESS_MAP_LOCATION':
+      return {
+        ...state,
+        cart: {
+          ...state.cart,
+          shippingAddress: {
+            ...state.cart.shippingAddress,
+            location: action.payload,
+          },
+        },
+      };
+    case 'SAVE_PAYMENT_METHOD':
       return {
         ...state,
         cart: { ...state.cart, paymentMethod: action.payload },
       };
-    }
-    case 'CART_CLEAR': {
-      return {
-        ...state,
-        cart: { ...state.cart, cartItems: [] },
-      };
-    }
-    case 'USER_LOGIN': {
+    case 'CART_CLEAR':
+      return { ...state, cart: { ...state.cart, cartItems: [] } };
+    case 'USER_LOGIN':
       return { ...state, userInfo: action.payload };
-    }
-    case 'USER_LOGOUT': {
+    case 'USER_LOGOUT':
       return {
         ...state,
         userInfo: null,
-        cart: { cartItems: [], shippingAddress: {}, paymentMethod: '' },
+        cart: {
+          cartItems: [],
+          shippingAddress: { location: {} },
+          paymentMethod: '',
+        },
       };
-    }
 
     default:
       return state;
@@ -87,7 +95,6 @@ function reducer(state, action) {
 
 export function StoreProvider(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
-
   const value = { state, dispatch };
   return <Store.Provider value={value}>{props.children}</Store.Provider>;
 }

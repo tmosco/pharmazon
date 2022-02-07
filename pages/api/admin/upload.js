@@ -1,12 +1,14 @@
 import nextConnect from 'next-connect';
+import { isAuth, isAdmin } from '../../../utils/auth';
+import { onError } from '../../../utils/error';
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import streamifier from 'streamifier';
-import { onError } from '../../../utils/error';
-import { isAdmin, isAuth } from '../../../utils/auth';
 
 cloudinary.config({
-  cloud_url: process.env.CLOUDINARY_URL,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 export const config = {
@@ -18,7 +20,7 @@ export const config = {
 const handler = nextConnect({ onError });
 const upload = multer();
 
-handler.use( isAuth, isAdmin,upload.single('file')).post(async (req, res) => {
+handler.use(isAuth, isAdmin, upload.single('file')).post(async (req, res) => {
   const streamUpload = (req) => {
     return new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream((error, result) => {
@@ -33,8 +35,6 @@ handler.use( isAuth, isAdmin,upload.single('file')).post(async (req, res) => {
   };
   const result = await streamUpload(req);
   res.send(result);
-
 });
-
 
 export default handler;

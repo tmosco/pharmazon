@@ -1,15 +1,15 @@
-import React, { useContext, useEffect } from 'react';
-import Layout from '../components/Layout';
 import {
-  Button,
   List,
   ListItem,
-  TextField,
   Typography,
+  TextField,
+  Button,
 } from '@material-ui/core';
-import useStyles from '../utils/styles';
-import { Store } from '../utils/Store';
 import { useRouter } from 'next/router';
+import React, { useContext, useEffect } from 'react';
+import Layout from '../components/Layout';
+import { Store } from '../utils/Store';
+import useStyles from '../utils/styles';
 import Cookies from 'js-cookie';
 import { Controller, useForm } from 'react-hook-form';
 import CheckoutWizard from '../components/CheckoutWizard';
@@ -27,6 +27,7 @@ export default function Shipping() {
     userInfo,
     cart: { shippingAddress },
   } = state;
+  const { location } = shippingAddress;
   useEffect(() => {
     if (!userInfo) {
       router.push('/login?redirect=/shipping');
@@ -39,27 +40,26 @@ export default function Shipping() {
   }, []);
 
   const classes = useStyles();
-  function submitHandler({ fullName, address, city, postalCode, country }) {
+  const submitHandler = ({ fullName, address, city, postalCode, country }) => {
     dispatch({
-      type: 'SAVE_SHIPPING',
-      payload: { fullName, address, city, postalCode, country },
+      type: 'SAVE_SHIPPING_ADDRESS',
+      payload: { fullName, address, city, postalCode, country, location },
     });
-    Cookies.set(
-      'shippingAddress',
-      JSON.stringify({
-        fullName,
-        address,
-        city,
-        postalCode,
-        country,
-      })
-    );
+    Cookies.set('shippingAddress', {
+      fullName,
+      address,
+      city,
+      postalCode,
+      country,
+      location,
+    });
     router.push('/payment');
-  }
+  };
+
 
   return (
-    <Layout title="Shipping Address ">
-        <CheckoutWizard activeStep={1}/>
+    <Layout title="Shipping Address">
+      <CheckoutWizard activeStep={1} />
       <form onSubmit={handleSubmit(submitHandler)} className={classes.form}>
         <Typography component="h1" variant="h1">
           Shipping Address
@@ -80,7 +80,6 @@ export default function Shipping() {
                   fullWidth
                   id="fullName"
                   label="Full Name"
-                  {...field}
                   error={Boolean(errors.fullName)}
                   helperText={
                     errors.fullName
@@ -89,6 +88,7 @@ export default function Shipping() {
                         : 'Full Name is required'
                       : ''
                   }
+                  {...field}
                 ></TextField>
               )}
             ></Controller>
@@ -108,8 +108,6 @@ export default function Shipping() {
                   fullWidth
                   id="address"
                   label="Address"
-                  inputProps={{ type: 'text' }}
-                  {...field}
                   error={Boolean(errors.address)}
                   helperText={
                     errors.address
@@ -118,6 +116,7 @@ export default function Shipping() {
                         : 'Address is required'
                       : ''
                   }
+                  {...field}
                 ></TextField>
               )}
             ></Controller>
@@ -137,16 +136,15 @@ export default function Shipping() {
                   fullWidth
                   id="city"
                   label="City"
-                  inputProps={{ type: 'text' }}
-                  {...field}
                   error={Boolean(errors.city)}
                   helperText={
-                    errors.fullName
+                    errors.city
                       ? errors.city.type === 'minLength'
                         ? 'City length is more than 1'
                         : 'City is required'
                       : ''
                   }
+                  {...field}
                 ></TextField>
               )}
             ></Controller>
@@ -166,8 +164,6 @@ export default function Shipping() {
                   fullWidth
                   id="postalCode"
                   label="Postal Code"
-                  inputProps={{ type: 'text' }}
-                  {...field}
                   error={Boolean(errors.postalCode)}
                   helperText={
                     errors.postalCode
@@ -176,6 +172,7 @@ export default function Shipping() {
                         : 'Postal Code is required'
                       : ''
                   }
+                  {...field}
                 ></TextField>
               )}
             ></Controller>
@@ -195,8 +192,6 @@ export default function Shipping() {
                   fullWidth
                   id="country"
                   label="Country"
-                  inputProps={{ type: 'text' }}
-                  {...field}
                   error={Boolean(errors.country)}
                   helperText={
                     errors.country
@@ -205,10 +200,12 @@ export default function Shipping() {
                         : 'Country is required'
                       : ''
                   }
+                  {...field}
                 ></TextField>
               )}
             ></Controller>
           </ListItem>
+
           <ListItem>
             <Button variant="contained" type="submit" fullWidth color="primary">
               Continue

@@ -1,31 +1,28 @@
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import React, { useEffect, useContext, useReducer } from 'react';
-import { getError } from '../../utils/error';
-import { Store } from '../../utils/Store';
-import useStyles from '../../utils/styles';
 import NextLink from 'next/link';
+import React, { useEffect, useContext, useReducer } from 'react';
 import {
-  Grid,
-  TableContainer,
-  Typography,
   CircularProgress,
-  Button,
-  Card,
+  Grid,
   List,
   ListItem,
+  Typography,
+  Card,
+  Button,
+  ListItemText,
+  TableContainer,
   Table,
+  TableHead,
   TableRow,
   TableCell,
   TableBody,
-  ListItemText,
-  TableHead,
-
 } from '@material-ui/core';
+import { getError } from '../../utils/error';
+import { Store } from '../../utils/Store';
 import Layout from '../../components/Layout';
-
-
+import useStyles from '../../utils/styles';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -35,16 +32,15 @@ function reducer(state, action) {
       return { ...state, loading: false, orders: action.payload, error: '' };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
-
     default:
       state;
   }
 }
 
-function AdminDashboard() {
-  const classes = useStyles();
-  const router = useRouter();
+function AdminOrders() {
   const { state } = useContext(Store);
+  const router = useRouter();
+  const classes = useStyles();
   const { userInfo } = state;
 
   const [{ loading, error, orders }, dispatch] = useReducer(reducer, {
@@ -71,13 +67,13 @@ function AdminDashboard() {
     fetchData();
   }, []);
   return (
-    <Layout title="Order History">
+    <Layout title="Orders">
       <Grid container spacing={1}>
         <Grid item md={3} xs={12}>
           <Card className={classes.section}>
             <List>
               <NextLink href="/admin/dashboard" passHref>
-                <ListItem  button component="a">
+                <ListItem button component="a">
                   <ListItemText primary="Admin Dashboard"></ListItemText>
                 </ListItem>
               </NextLink>
@@ -87,12 +83,12 @@ function AdminDashboard() {
                 </ListItem>
               </NextLink>
               <NextLink href="/admin/products" passHref>
-                <ListItem  button component="a">
+                <ListItem button component="a">
                   <ListItemText primary="Products"></ListItemText>
                 </ListItem>
               </NextLink>
               <NextLink href="/admin/users" passHref>
-                <ListItem  button component="a">
+                <ListItem button component="a">
                   <ListItemText primary="Users"></ListItemText>
                 </ListItem>
               </NextLink>
@@ -107,6 +103,7 @@ function AdminDashboard() {
                   Orders
                 </Typography>
               </ListItem>
+
               <ListItem>
                 {loading ? (
                   <CircularProgress />
@@ -130,9 +127,11 @@ function AdminDashboard() {
                         {orders.map((order) => (
                           <TableRow key={order._id}>
                             <TableCell>{order._id.substring(20, 24)}</TableCell>
-                            <TableCell>{order.user?order.user.name:"DELETED USER"}</TableCell>
+                            <TableCell>
+                              {order.user ? order.user.name : 'DELETED USER'}
+                            </TableCell>
                             <TableCell>{order.createdAt}</TableCell>
-                            <TableCell>₦{order.totalPrice}</TableCell>
+                            <TableCell>${order.totalPrice}</TableCell>
                             <TableCell>
                               {order.isPaid
                                 ? `paid at ${order.paidAt}`
@@ -145,7 +144,7 @@ function AdminDashboard() {
                             </TableCell>
                             <TableCell>
                               <NextLink href={`/order/${order._id}`} passHref>
-                                <Button variant="contained">Details </Button>
+                                <Button variant="contained">Details</Button>
                               </NextLink>
                             </TableCell>
                           </TableRow>
@@ -163,4 +162,4 @@ function AdminDashboard() {
   );
 }
 
-export default dynamic(() => Promise.resolve(AdminDashboard), { ssr: false });
+export default dynamic(() => Promise.resolve(AdminOrders), { ssr: false });

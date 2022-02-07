@@ -15,10 +15,10 @@ import {
   TableCell,
   Link,
   CircularProgress,
+  Button,
   Card,
   List,
   ListItem,
-  Button,
 } from '@material-ui/core';
 import axios from 'axios';
 import { useRouter } from 'next/router';
@@ -82,6 +82,7 @@ function Order({ params }) {
     paymentMethod,
     orderItems,
     itemsPrice,
+    taxPrice,
     shippingPrice,
     totalPrice,
     isPaid,
@@ -146,11 +147,10 @@ function Order({ params }) {
           },
         ],
       })
-      .then((orderId) => {
-        return orderId;
+      .then((orderID) => {
+        return orderID;
       });
   }
-
   function onApprove(data, actions) {
     return actions.order.capture().then(async function (details) {
       try {
@@ -179,7 +179,7 @@ function Order({ params }) {
     try {
       dispatch({ type: 'DELIVER_REQUEST' });
       const { data } = await axios.put(
-        `/api/orders/${order._id}/delivered`,
+        `/api/orders/${order._id}/deliver`,
         {},
         {
           headers: { authorization: `Bearer ${userInfo.token}` },
@@ -189,6 +189,7 @@ function Order({ params }) {
       enqueueSnackbar('Order is delivered', { variant: 'success' });
     } catch (err) {
       dispatch({ type: 'DELIVER_FAIL', payload: getError(err) });
+      enqueueSnackbar(getError(err), { variant: 'error' });
     }
   }
 
@@ -212,19 +213,25 @@ function Order({ params }) {
                   </Typography>
                 </ListItem>
                 <ListItem>
-                  <Typography>
-                    {shippingAddress.fullName},{shippingAddress.address},{' '}
-                    {shippingAddress.city},{shippingAddress.postalCode},{' '}
-                    {shippingAddress.country}
-                  </Typography>
+                  {shippingAddress.fullName}, {shippingAddress.address},{' '}
+                  {shippingAddress.city}, {shippingAddress.postalCode},{' '}
+                  {shippingAddress.country}
+                  &nbsp;
+                  {shippingAddress.location && (
+                    <Link
+                      variant="button"
+                      target="_new"
+                      href={`https://maps.google.com?q=${shippingAddress.location.lat},${shippingAddress.location.lng}`}
+                    >
+                      Show On Map
+                    </Link>
+                  )}
                 </ListItem>
                 <ListItem>
-                  <Typography>
-                    Status:
-                    {isDelivered
-                      ? `delivered at ${deliveredAt}`
-                      : 'not delivered'}
-                  </Typography>
+                  Status:{' '}
+                  {isDelivered
+                    ? `delivered at ${deliveredAt}`
+                    : 'not delivered'}
                 </ListItem>
               </List>
             </Card>
@@ -235,14 +242,9 @@ function Order({ params }) {
                     Payment Method
                   </Typography>
                 </ListItem>
+                <ListItem>{paymentMethod}</ListItem>
                 <ListItem>
-                  <Typography>{paymentMethod}</Typography>
-                </ListItem>
-                <ListItem>
-                  <Typography>
-                    Status:
-                    {isPaid ? `paid at ${paidAt}` : 'not paid'}
-                  </Typography>
+                  Status: {isPaid ? `paid at ${paidAt}` : 'not paid'}
                 </ListItem>
               </List>
             </Card>
@@ -258,11 +260,10 @@ function Order({ params }) {
                     <Table>
                       <TableHead>
                         <TableRow>
-                          <TableCell> Image </TableCell>
-                          <TableCell> Name </TableCell>
-                          <TableCell align="right"> Quantity </TableCell>
-                          <TableCell align="right"> Price </TableCell>
-                          <TableCell align="right"> Action </TableCell>
+                          <TableCell>Image</TableCell>
+                          <TableCell>Name</TableCell>
+                          <TableCell align="right">Quantity</TableCell>
+                          <TableCell align="right">Price</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -276,20 +277,23 @@ function Order({ params }) {
                                     alt={item.name}
                                     width={50}
                                     height={50}
-                                  />
+                                  ></Image>
                                 </Link>
                               </NextLink>
                             </TableCell>
+
                             <TableCell>
                               <NextLink href={`/product/${item.slug}`} passHref>
-                                <Link>{item.name}</Link>
+                                <Link>
+                                  <Typography>{item.name}</Typography>
+                                </Link>
                               </NextLink>
                             </TableCell>
                             <TableCell align="right">
-                              <Typography> {item.quantity}</Typography>
+                              <Typography>{item.quantity}</Typography>
                             </TableCell>
                             <TableCell align="right">
-                              <Typography>₦{item.price} </Typography>
+                              <Typography>₦{item.price}</Typography>
                             </TableCell>
                           </TableRow>
                         ))}
@@ -300,7 +304,7 @@ function Order({ params }) {
               </List>
             </Card>
           </Grid>
-          <Grid md={3} xs={12}>
+          <Grid item md={3} xs={12}>
             <Card className={classes.section}>
               <List>
                 <ListItem>
@@ -314,17 +318,33 @@ function Order({ params }) {
                     <Grid item xs={6}>
                       <Typography align="right">₦{itemsPrice}</Typography>
                     </Grid>
-
+                  </Grid>
+                </ListItem>
+                <ListItem>
+                  <Grid container>
                     <Grid item xs={6}>
-                      <Typography>Shipping:</Typography>
+                      <Typography>Vat:</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography align="right">₦{taxPrice}</Typography>
+                    </Grid>
+                  </Grid>
+                </ListItem>
+                <ListItem>
+                  <Grid container>
+                    <Grid item xs={6}>
+                      <Typography>Delivery:</Typography>
                     </Grid>
                     <Grid item xs={6}>
                       <Typography align="right">₦{shippingPrice}</Typography>
                     </Grid>
-
+                  </Grid>
+                </ListItem>
+                <ListItem>
+                  <Grid container>
                     <Grid item xs={6}>
                       <Typography>
-                        <strong>Total: </strong>
+                        <strong>Total:</strong>
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -339,7 +359,7 @@ function Order({ params }) {
                     {isPending ? (
                       <CircularProgress />
                     ) : (
-                      <div className="{classes.fullWidth}">
+                      <div className={classes.fullWidth}>
                         <PayPalButtons
                           createOrder={createOrder}
                           onApprove={onApprove}

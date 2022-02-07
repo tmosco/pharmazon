@@ -1,19 +1,18 @@
-import React, { useContext, useEffect } from 'react';
-import Layout from '../components/Layout';
-import NextLink from 'next/link';
 import {
-  Button,
-  Grid,
-  Link,
   List,
   ListItem,
-  TextField,
   Typography,
+  TextField,
+  Button,
+  Link,
 } from '@material-ui/core';
-import useStyles from '../utils/styles';
 import axios from 'axios';
-import { Store } from '../utils/Store';
 import { useRouter } from 'next/router';
+import NextLink from 'next/link';
+import React, { useContext, useEffect } from 'react';
+import Layout from '../components/Layout';
+import { Store } from '../utils/Store';
+import useStyles from '../utils/styles';
 import Cookies from 'js-cookie';
 import { Controller, useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
@@ -27,8 +26,7 @@ export default function Login() {
   } = useForm();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const router = useRouter();
-  const { redirect } = router.query;
-
+  const { redirect } = router.query; // login?redirect=/shipping
   const { state, dispatch } = useContext(Store);
   const { userInfo } = state;
   useEffect(() => {
@@ -38,7 +36,7 @@ export default function Login() {
   }, []);
 
   const classes = useStyles();
-  async function submitHandler({ email, password }) {
+  const submitHandler = async ({ email, password }) => {
     closeSnackbar();
     try {
       const { data } = await axios.post('/api/users/login', {
@@ -46,14 +44,12 @@ export default function Login() {
         password,
       });
       dispatch({ type: 'USER_LOGIN', payload: data });
-      Cookies.set('userInfo', JSON.stringify(data));
+      Cookies.set('userInfo', data);
       router.push(redirect || '/');
     } catch (err) {
-      enqueueSnackbar(getError(err), {
-        variant: 'error',
-      });
+      enqueueSnackbar(getError(err), { variant: 'error' });
     }
-  }
+  };
   return (
     <Layout title="Login">
       <form onSubmit={handleSubmit(submitHandler)} className={classes.form}>
@@ -125,19 +121,9 @@ export default function Login() {
             </Button>
           </ListItem>
           <ListItem>
-            <Grid container spacing={1}>
-              <Grid item md={9} xs={12}></Grid>
-              <Grid item md={3} xs={12}>
-                <NextLink href="/forgot-password" passHref>
-                  <Link>Forgot password?</Link>
-                </NextLink>
-              </Grid>
-            </Grid>
-          </ListItem>
-          <ListItem>
-            Do not have an account? &nbsp;
+            Don&apos;t have an account? &nbsp;
             <NextLink href={`/register?redirect=${redirect || '/'}`} passHref>
-              <Link> Register</Link>
+              <Link>Register</Link>
             </NextLink>
           </ListItem>
         </List>

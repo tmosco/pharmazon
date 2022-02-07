@@ -1,27 +1,26 @@
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import React, { useEffect, useContext, useReducer, useState } from 'react';
-import { getError } from '../../../utils/error';
-import { Store } from '../../../utils/Store';
-import useStyles from '../../../utils/styles';
 import NextLink from 'next/link';
-import { Controller, useForm } from 'react-hook-form';
-
+import React, { useEffect, useContext, useReducer, useState } from 'react';
 import {
   Grid,
-  Typography,
-  Button,
-  Card,
   List,
   ListItem,
+  Typography,
+  Card,
+  Button,
   ListItemText,
   TextField,
   CircularProgress,
   Checkbox,
   FormControlLabel,
 } from '@material-ui/core';
+import { getError } from '../../../utils/error';
+import { Store } from '../../../utils/Store';
 import Layout from '../../../components/Layout';
+import useStyles from '../../../utils/styles';
+import { Controller, useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
 
 function reducer(state, action) {
@@ -38,6 +37,17 @@ function reducer(state, action) {
       return { ...state, loadingUpdate: false, errorUpdate: '' };
     case 'UPDATE_FAIL':
       return { ...state, loadingUpdate: false, errorUpdate: action.payload };
+    case 'UPLOAD_REQUEST':
+      return { ...state, loadingUpload: true, errorUpload: '' };
+    case 'UPLOAD_SUCCESS':
+      return {
+        ...state,
+        loadingUpload: false,
+        errorUpload: '',
+      };
+    case 'UPLOAD_FAIL':
+      return { ...state, loadingUpload: false, errorUpload: action.payload };
+
     default:
       return state;
   }
@@ -45,23 +55,22 @@ function reducer(state, action) {
 
 function UserEdit({ params }) {
   const userId = params.id;
-  const classes = useStyles();
-  const router = useRouter();
   const { state } = useContext(Store);
   const [{ loading, error, loadingUpdate }, dispatch] = useReducer(reducer, {
     loading: true,
     error: '',
   });
-  const { userInfo } = state;
   const {
     handleSubmit,
     control,
     formState: { errors },
     setValue,
   } = useForm();
-
   const [isAdmin, setIsAdmin] = useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const router = useRouter();
+  const classes = useStyles();
+  const { userInfo } = state;
 
   useEffect(() => {
     if (!userInfo) {
@@ -77,13 +86,14 @@ function UserEdit({ params }) {
           dispatch({ type: 'FETCH_SUCCESS' });
           setValue('name', data.name);
         } catch (err) {
-          dispatch({ type: 'FETCH_FAIL', payload: getError() });
+          dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
         }
       };
       fetchData();
     }
   }, []);
-  async function submitHandler({ name }) {
+
+  const submitHandler = async ({ name }) => {
     closeSnackbar();
     try {
       dispatch({ type: 'UPDATE_REQUEST' });
@@ -93,22 +103,16 @@ function UserEdit({ params }) {
           name,
           isAdmin,
         },
-        {
-          headers: {
-            authorization: `Bearer ${userInfo.token}`,
-          },
-        }
+        { headers: { authorization: `Bearer ${userInfo.token}` } }
       );
       dispatch({ type: 'UPDATE_SUCCESS' });
-
-      enqueueSnackbar('Product updated successfully', { variant: 'success' });
+      enqueueSnackbar('User updated successfully', { variant: 'success' });
       router.push('/admin/users');
     } catch (err) {
       dispatch({ type: 'UPDATE_FAIL', payload: getError(err) });
       enqueueSnackbar(getError(err), { variant: 'error' });
     }
-  }
-
+  };
   return (
     <Layout title={`Edit User ${userId}`}>
       <Grid container spacing={1}>
@@ -135,7 +139,7 @@ function UserEdit({ params }) {
                   <ListItemText primary="Users"></ListItemText>
                 </ListItem>
               </NextLink>
-            </List>{' '}
+            </List>
           </Card>
         </Grid>
         <Grid item md={9} xs={12}>
@@ -143,7 +147,7 @@ function UserEdit({ params }) {
             <List>
               <ListItem>
                 <Typography component="h1" variant="h1">
-                  Edit Product {userId}
+                  Edit User {userId}
                 </Typography>
               </ListItem>
               <ListItem>
@@ -171,12 +175,10 @@ function UserEdit({ params }) {
                             variant="outlined"
                             fullWidth
                             id="name"
-                            label="User Name"
-                            {...field}
+                            label="Name"
                             error={Boolean(errors.name)}
-                            helperText={
-                              errors.name ? 'User Name is required' : ''
-                            }
+                            helperText={errors.name ? 'Name is required' : ''}
+                            {...field}
                           ></TextField>
                         )}
                       ></Controller>
@@ -193,7 +195,6 @@ function UserEdit({ params }) {
                         }
                       ></FormControlLabel>
                     </ListItem>
-
                     <ListItem>
                       <Button
                         variant="contained"
@@ -203,8 +204,8 @@ function UserEdit({ params }) {
                       >
                         Update
                       </Button>
+                      {loadingUpdate && <CircularProgress />}
                     </ListItem>
-                    {loadingUpdate && <CircularProgress />}
                   </List>
                 </form>
               </ListItem>

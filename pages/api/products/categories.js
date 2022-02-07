@@ -6,9 +6,9 @@ const handler = nc();
 
 handler.get(async (req, res) => {
   await db.connect();
-  const products = await Product.find({});
+  const categories = await Product.find().distinct('category');
   await db.disconnect();
-  res.send(products);
+  res.send(categories);
 });
 
 export default handler;

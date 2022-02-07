@@ -4,16 +4,15 @@ import Layout from '../components/Layout';
 import { Store } from '../utils/Store';
 import NextLink from 'next/link';
 import Image from 'next/image';
-import axios from 'axios';
 import {
-  Typography,
   Grid,
   TableContainer,
   Table,
+  Typography,
   TableHead,
+  TableBody,
   TableRow,
   TableCell,
-  TableBody,
   Link,
   Select,
   MenuItem,
@@ -22,7 +21,8 @@ import {
   List,
   ListItem,
 } from '@material-ui/core';
-import{ useRouter } from 'next/router';
+import axios from 'axios';
+import { useRouter } from 'next/router';
 
 function CartScreen() {
   const router = useRouter();
@@ -30,23 +30,20 @@ function CartScreen() {
   const {
     cart: { cartItems },
   } = state;
-
-  async function updateCartHandler(item, quantity) {
+  const updateCartHandler = async (item, quantity) => {
     const { data } = await axios.get(`/api/products/${item._id}`);
     if (data.countInStock < quantity) {
       window.alert('Sorry. Product is out of stock');
       return;
     }
     dispatch({ type: 'CART_ADD_ITEM', payload: { ...item, quantity } });
-  }
-  function removeItemHandler(item) {
+  };
+  const removeItemHandler = (item) => {
     dispatch({ type: 'CART_REMOVE_ITEM', payload: item });
-  }
-
-  function checkoutHandler() {
+  };
+  const checkoutHandler = () => {
     router.push('/shipping');
-  }
-
+  };
   return (
     <Layout title="Shopping Cart">
       <Typography component="h1" variant="h1">
@@ -54,8 +51,8 @@ function CartScreen() {
       </Typography>
       {cartItems.length === 0 ? (
         <div>
-          Cart is empty.
-          <NextLink href={'/'} passHref>
+          Cart is empty.{' '}
+          <NextLink href="/" passHref>
             <Link>Go shopping</Link>
           </NextLink>
         </div>
@@ -66,11 +63,11 @@ function CartScreen() {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell> Image </TableCell>
-                    <TableCell> Name </TableCell>
-                    <TableCell align="right"> Quantity </TableCell>
-                    <TableCell align="right"> Price </TableCell>
-                    <TableCell align="right"> Action </TableCell>
+                    <TableCell>Image</TableCell>
+                    <TableCell>Name</TableCell>
+                    <TableCell align="right">Quantity</TableCell>
+                    <TableCell align="right">Price</TableCell>
+                    <TableCell align="right">Action</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -84,10 +81,11 @@ function CartScreen() {
                               alt={item.name}
                               width={50}
                               height={50}
-                            />
+                            ></Image>
                           </Link>
                         </NextLink>
                       </TableCell>
+
                       <TableCell>
                         <NextLink href={`/product/${item.slug}`} passHref>
                           <Link>
@@ -109,7 +107,7 @@ function CartScreen() {
                           ))}
                         </Select>
                       </TableCell>
-                      <TableCell align="right">₦{item.price}</TableCell>
+                      <TableCell align="right">${item.price}</TableCell>
                       <TableCell align="right">
                         <Button
                           variant="contained"
@@ -125,22 +123,22 @@ function CartScreen() {
               </Table>
             </TableContainer>
           </Grid>
-          <Grid md={3} xs={12}>
+          <Grid item md={3} xs={12}>
             <Card>
               <List>
                 <ListItem>
                   <Typography variant="h2">
-                    Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)}){' '}
-                    items : ₦
+                    Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)}{' '}
+                    items) : ₦
                     {cartItems.reduce((a, c) => a + c.quantity * c.price, 0)}
                   </Typography>
                 </ListItem>
                 <ListItem>
                   <Button
+                    onClick={checkoutHandler}
                     variant="contained"
                     color="primary"
                     fullWidth
-                    onClick={checkoutHandler}
                   >
                     Check Out
                   </Button>

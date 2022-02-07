@@ -1,32 +1,28 @@
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import React, { useEffect, useContext } from 'react';
-import { getError } from '../utils/error';
-import { Store } from '../utils/Store';
-import useStyles from '../utils/styles';
 import NextLink from 'next/link';
-import { Controller, useForm } from 'react-hook-form';
-
+import React, { useEffect, useContext } from 'react';
 import {
   Grid,
-  Typography,
-  Button,
-  Card,
   List,
   ListItem,
+  Typography,
+  Card,
+  Button,
   ListItemText,
   TextField,
 } from '@material-ui/core';
+import { getError } from '../utils/error';
+import { Store } from '../utils/Store';
 import Layout from '../components/Layout';
+import useStyles from '../utils/styles';
+import { Controller, useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
 import Cookies from 'js-cookie';
 
 function Profile() {
-  const classes = useStyles();
-  const router = useRouter();
   const { state, dispatch } = useContext(Store);
-  const { userInfo } = state;
   const {
     handleSubmit,
     control,
@@ -34,6 +30,9 @@ function Profile() {
     setValue,
   } = useForm();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const router = useRouter();
+  const classes = useStyles();
+  const { userInfo } = state;
 
   useEffect(() => {
     if (!userInfo) {
@@ -42,11 +41,10 @@ function Profile() {
     setValue('name', userInfo.name);
     setValue('email', userInfo.email);
   }, []);
-
-  async function submitHandler({ name, email, password, confirmPassword }) {
+  const submitHandler = async ({ name, email, password, confirmPassword }) => {
+    closeSnackbar();
     if (password !== confirmPassword) {
-      closeSnackbar();
-      enqueueSnackbar("Password don't match", { variant: 'error' });
+      enqueueSnackbar("Passwords don't match", { variant: 'error' });
       return;
     }
     try {
@@ -56,24 +54,19 @@ function Profile() {
           name,
           email,
           password,
-          confirmPassword,
         },
-        {
-          headers: {
-            authorization: `Bearer ${userInfo.token}`,
-          },
-        }
+        { headers: { authorization: `Bearer ${userInfo.token}` } }
       );
       dispatch({ type: 'USER_LOGIN', payload: data });
-      Cookies.set('userInfo', JSON.stringify(data));
+      Cookies.set('userInfo', data);
+
       enqueueSnackbar('Profile updated successfully', { variant: 'success' });
     } catch (err) {
       enqueueSnackbar(getError(err), { variant: 'error' });
     }
-  }
-
+  };
   return (
-    <Layout title="profile">
+    <Layout title="Profile">
       <Grid container spacing={1}>
         <Grid item md={3} xs={12}>
           <Card className={classes.section}>
@@ -120,16 +113,16 @@ function Profile() {
                             fullWidth
                             id="name"
                             label="Name"
-                            inputProps={{ type: 'text' }}
-                            {...field}
+                            inputProps={{ type: 'name' }}
                             error={Boolean(errors.name)}
                             helperText={
-                              errors.email
+                              errors.name
                                 ? errors.name.type === 'minLength'
                                   ? 'Name length is more than 1'
                                   : 'Name is required'
                                 : ''
                             }
+                            {...field}
                           ></TextField>
                         )}
                       ></Controller>
@@ -150,7 +143,6 @@ function Profile() {
                             id="email"
                             label="Email"
                             inputProps={{ type: 'email' }}
-                            {...field}
                             error={Boolean(errors.email)}
                             helperText={
                               errors.email
@@ -159,6 +151,7 @@ function Profile() {
                                   : 'Email is required'
                                 : ''
                             }
+                            {...field}
                           ></TextField>
                         )}
                       ></Controller>
@@ -172,7 +165,7 @@ function Profile() {
                           validate: (value) =>
                             value === '' ||
                             value.length > 5 ||
-                            'Password length is more than 5 ',
+                            'Password length is more than 5',
                         }}
                         render={({ field }) => (
                           <TextField
@@ -181,13 +174,13 @@ function Profile() {
                             id="password"
                             label="Password"
                             inputProps={{ type: 'password' }}
-                            {...field}
                             error={Boolean(errors.password)}
                             helperText={
                               errors.password
                                 ? 'Password length is more than 5'
                                 : ''
                             }
+                            {...field}
                           ></TextField>
                         )}
                       ></Controller>
@@ -201,7 +194,7 @@ function Profile() {
                           validate: (value) =>
                             value === '' ||
                             value.length > 5 ||
-                            'Confirm password length is more than 5 ',
+                            'Confirm Password length is more than 5',
                         }}
                         render={({ field }) => (
                           <TextField
@@ -210,13 +203,13 @@ function Profile() {
                             id="confirmPassword"
                             label="Confirm Password"
                             inputProps={{ type: 'password' }}
-                            {...field}
                             error={Boolean(errors.confirmPassword)}
                             helperText={
                               errors.password
-                                ? 'Confirm password length is more than 5'
+                                ? 'Confirm Password length is more than 5'
                                 : ''
                             }
+                            {...field}
                           ></TextField>
                         )}
                       ></Controller>

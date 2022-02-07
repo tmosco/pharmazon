@@ -8,16 +8,17 @@ const signToken = (user) => {
       email: user.email,
       isAdmin: user.isAdmin,
     },
+
     process.env.JWT_SECRET,
     {
-      expiresIn: process.env.EXPIRES_IN,
+      expiresIn: '30d',
     }
   );
 };
-
 const isAuth = async (req, res, next) => {
   const { authorization } = req.headers;
   if (authorization) {
+    // Bearer xxx => xxx
     const token = authorization.slice(7, authorization.length);
     jwt.verify(token, process.env.JWT_SECRET, (err, decode) => {
       if (err) {
@@ -28,10 +29,9 @@ const isAuth = async (req, res, next) => {
       }
     });
   } else {
-    res.status(401).send({ message: 'Token is not supplied' });
+    res.status(401).send({ message: 'Token is not suppiled' });
   }
 };
-
 const isAdmin = async (req, res, next) => {
   if (req.user.isAdmin) {
     next();
@@ -40,7 +40,4 @@ const isAdmin = async (req, res, next) => {
   }
 };
 
-
-
-
-export { signToken, isAuth ,isAdmin};
+export { signToken, isAuth, isAdmin };

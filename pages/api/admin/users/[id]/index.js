@@ -1,10 +1,9 @@
 import nc from 'next-connect';
-import User from '../../../../models/user';
-import db from '../../../../utils/db';
-import { isAdmin, isAuth } from '../../../../utils/auth';
+import { isAdmin, isAuth } from '../../../../../utils/auth';
+import User from '../../../../../models/User';
+import db from '../../../../../utils/db';
 
 const handler = nc();
-
 handler.use(isAuth, isAdmin);
 
 handler.get(async (req, res) => {
@@ -35,7 +34,7 @@ handler.delete(async (req, res) => {
   if (user) {
     await user.remove();
     await db.disconnect();
-    res.send({ message: 'User Deleted', user });
+    res.send({ message: 'User Deleted' });
   } else {
     await db.disconnect();
     res.status(404).send({ message: 'User Not Found' });

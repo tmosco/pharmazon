@@ -1,28 +1,28 @@
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import React, { useEffect, useContext, useReducer } from 'react';
-import { getError } from '../utils/error';
-import { Store } from '../utils/Store';
-import useStyles from '../utils/styles';
 import NextLink from 'next/link';
+import React, { useEffect, useContext, useReducer } from 'react';
 import {
-  Grid,
-  TableContainer,
-  Typography,
   CircularProgress,
-  Button,
-  Card,
+  Grid,
   List,
   ListItem,
+  TableContainer,
+  Typography,
+  Card,
   Table,
+  TableHead,
   TableRow,
   TableCell,
   TableBody,
+  Button,
   ListItemText,
 } from '@material-ui/core';
+import { getError } from '../utils/error';
+import { Store } from '../utils/Store';
 import Layout from '../components/Layout';
-import { TableHead } from '@mui/material';
+import useStyles from '../utils/styles';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -32,26 +32,22 @@ function reducer(state, action) {
       return { ...state, loading: false, orders: action.payload, error: '' };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
-
     default:
       state;
   }
 }
 
 function OrderHistory() {
-  const classes = useStyles();
-  const router = useRouter();
   const { state } = useContext(Store);
+  const router = useRouter();
+  const classes = useStyles();
   const { userInfo } = state;
 
-  const [{ loading, error, orders }, dispatch] = useReducer(
-    reducer,
-    {
-      loading: true,
-      orders: [],
-      error: '',
-    }
-  );
+  const [{ loading, error, orders }, dispatch] = useReducer(reducer, {
+    loading: true,
+    orders: [],
+    error: '',
+  });
 
   useEffect(() => {
     if (!userInfo) {
@@ -120,7 +116,7 @@ function OrderHistory() {
                           <TableRow key={order._id}>
                             <TableCell>{order._id.substring(20, 24)}</TableCell>
                             <TableCell>{order.createdAt}</TableCell>
-                            <TableCell>₦{order.totalPrice}</TableCell>
+                            <TableCell>${order.totalPrice}</TableCell>
                             <TableCell>
                               {order.isPaid
                                 ? `paid at ${order.paidAt}`
@@ -133,7 +129,7 @@ function OrderHistory() {
                             </TableCell>
                             <TableCell>
                               <NextLink href={`/order/${order._id}`} passHref>
-                                <Button variant="contained">Details </Button>
+                                <Button variant="contained">Details</Button>
                               </NextLink>
                             </TableCell>
                           </TableRow>
