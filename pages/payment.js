@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { Store } from '../utils/Store';
 import Layout from '../components/Layout';
-import CheckoutWizard from '../components/CheckoutWizard';
+// import CheckoutWizard from '../components/CheckoutWizard';
 import useStyles from '../utils/styles';
 import {
   Button,
@@ -46,7 +46,7 @@ export default function Payment() {
   };
   return (
     <Layout title="Payment Method">
-      <CheckoutWizard activeStep={2}></CheckoutWizard>
+      {/* <CheckoutWizard activeStep={2}></CheckoutWizard> */}
       <form className={classes.form} onSubmit={submitHandler}>
         <Typography component="h1" variant="h1">
           Payment Method

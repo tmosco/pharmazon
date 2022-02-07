@@ -23,7 +23,7 @@ import {
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import useStyles from '../utils/styles';
-import CheckoutWizard from '../components/CheckoutWizard';
+// import CheckoutWizard from '../components/CheckoutWizard';
 import { useSnackbar } from 'notistack';
 import { getError } from '../utils/error';
 import Cookies from 'js-cookie';
@@ -86,7 +86,7 @@ function PlaceOrder() {
   };
   return (
     <Layout title="Place Order">
-      <CheckoutWizard activeStep={3}></CheckoutWizard>
+      {/* <CheckoutWizard activeStep={3}></CheckoutWizard> */}
       <Typography component="h1" variant="h1">
         Place Order
       </Typography>

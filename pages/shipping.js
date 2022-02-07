@@ -12,7 +12,7 @@ import { Store } from '../utils/Store';
 import useStyles from '../utils/styles';
 import Cookies from 'js-cookie';
 import { Controller, useForm } from 'react-hook-form';
-import CheckoutWizard from '../components/CheckoutWizard';
+// import CheckoutWizard from '../components/CheckoutWizard';
 
 export default function Shipping() {
   const {
@@ -59,7 +59,7 @@ export default function Shipping() {
 
   return (
     <Layout title="Shipping Address">
-      <CheckoutWizard activeStep={1} />
+      {/* <CheckoutWizard activeStep={1} /> */}
       <form onSubmit={handleSubmit(submitHandler)} className={classes.form}>
         <Typography component="h1" variant="h1">
           Shipping Address
