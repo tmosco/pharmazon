@@ -5,13 +5,9 @@ import Jwt from 'jsonwebtoken';
 
 const handler = nc();
 
-handler.get(async (req, res) => {
-  await db.connect();
-  const email = req.body.email;
-  res.send("hi");
-});
 
-handler.post(async (req, res) => {
+
+handler.post(async (req,) => {
   await db.connect();
   const user = await User.findOne({ email: req.body.email });
   const email = req.body.email;

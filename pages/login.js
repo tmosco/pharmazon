@@ -1,4 +1,4 @@
-import React, { useContext, useEffect} from 'react';
+import React, { useContext, useEffect } from 'react';
 import Layout from '../components/Layout';
 import NextLink from 'next/link';
 import {
@@ -135,7 +135,7 @@ export default function Login() {
             </Grid>
           </ListItem>
           <ListItem>
-            Don't have an account? &nbsp;
+            Do not have an account? &nbsp;
             <NextLink href={`/register?redirect=${redirect || '/'}`} passHref>
               <Link> Register</Link>
             </NextLink>
