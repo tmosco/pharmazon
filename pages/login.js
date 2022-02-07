@@ -1,8 +1,9 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect} from 'react';
 import Layout from '../components/Layout';
 import NextLink from 'next/link';
 import {
   Button,
+  Grid,
   Link,
   List,
   ListItem,
@@ -12,7 +13,7 @@ import {
 import useStyles from '../utils/styles';
 import axios from 'axios';
 import { Store } from '../utils/Store';
-import  { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import { Controller, useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
@@ -79,10 +80,10 @@ export default function Login() {
                   error={Boolean(errors.email)}
                   helperText={
                     errors.email
-                    ? errors.email.type === 'pattern'
-                    ? 'Email is not valid'
-                    : 'Email is required'
-                    : ''
+                      ? errors.email.type === 'pattern'
+                        ? 'Email is not valid'
+                        : 'Email is required'
+                      : ''
                   }
                   {...field}
                 ></TextField>
@@ -108,10 +109,10 @@ export default function Login() {
                   error={Boolean(errors.password)}
                   helperText={
                     errors.password
-                    ? errors.password.type === 'minLength'
-                    ? 'Password length is more than 5'
-                    : 'Password is required'
-                    : ''
+                      ? errors.password.type === 'minLength'
+                        ? 'Password length is more than 5'
+                        : 'Password is required'
+                      : ''
                   }
                   {...field}
                 ></TextField>
@@ -122,6 +123,16 @@ export default function Login() {
             <Button variant="contained" type="submit" fullWidth color="primary">
               Login
             </Button>
+          </ListItem>
+          <ListItem>
+            <Grid container spacing={1}>
+              <Grid item md={9} xs={12}></Grid>
+              <Grid item md={3} xs={12}>
+                <NextLink href="/forgot-password" passHref>
+                  <Link>Forgot password?</Link>
+                </NextLink>
+              </Grid>
+            </Grid>
           </ListItem>
           <ListItem>
             Don't have an account? &nbsp;
